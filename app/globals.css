@@ -375,3 +375,9 @@ html {
     scroll-behavior: auto;
   }
 }
+
+/* ======== Hide Platform-Injected v0 Badge ======== */
+[id^="v0-built-with-button"] {
+  display: none !important;
+}
+
