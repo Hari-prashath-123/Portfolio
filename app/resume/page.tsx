@@ -9,7 +9,7 @@ import { AnimateOnScroll } from "@/components/scroll-animations"
 export default function ResumePage() {
   const handleDownload = () => {
     const link = document.createElement("a")
-    link.href = "/RESUME 4th YEAR.pdf"
+    link.href = "/resume.pdf"
     link.download = "Hariprashath-B-Resume.pdf"
     document.body.appendChild(link)
     link.click()
