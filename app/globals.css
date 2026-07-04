@@ -204,3 +204,174 @@
     animation: slideInFromTop 0.3s ease-in-out;
   }
 }
+
+/* ======== Floating Elements ======== */
+.floating-container {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.floating-element {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.float-circle {
+  border-radius: 50%;
+  animation: floatOrbit linear infinite;
+}
+
+.float-dot {
+  border-radius: 50%;
+  animation: floatDot ease-in-out infinite;
+}
+
+.float-hexagon {
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  animation: floatHexagon linear infinite;
+}
+
+@keyframes floatOrbit {
+  0% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(30px, -20px) scale(1.05); }
+  50% { transform: translate(-10px, 25px) scale(0.95); }
+  75% { transform: translate(-25px, -15px) scale(1.02); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes floatDot {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
+  33% { transform: translateY(-20px) scale(1.3); opacity: 1; }
+  66% { transform: translateY(10px) scale(0.8); opacity: 0.4; }
+}
+
+@keyframes floatHexagon {
+  0% { transform: rotate(0deg) translate(0, 0); }
+  25% { transform: rotate(90deg) translate(15px, -10px); }
+  50% { transform: rotate(180deg) translate(-5px, 15px); }
+  75% { transform: rotate(270deg) translate(-15px, -5px); }
+  100% { transform: rotate(360deg) translate(0, 0); }
+}
+
+/* ======== Animated Gradient Background ======== */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animated-gradient-dark {
+  background: linear-gradient(
+    -45deg,
+    rgba(15, 23, 42, 1),
+    rgba(30, 41, 59, 1),
+    rgba(15, 23, 42, 1),
+    rgba(23, 37, 84, 1),
+    rgba(15, 23, 42, 1)
+  );
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+.animated-gradient-light {
+  background: linear-gradient(
+    -45deg,
+    rgba(241, 245, 249, 1),
+    rgba(224, 231, 255, 1),
+    rgba(241, 245, 249, 1),
+    rgba(237, 233, 254, 1),
+    rgba(241, 245, 249, 1)
+  );
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+/* ======== Profile Image Glow Pulse ======== */
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+}
+
+.glow-pulse {
+  animation: glowPulse 4s ease-in-out infinite;
+}
+
+/* ======== Shimmer effect for cards ======== */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.card-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(59, 130, 246, 0.05) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  transition: none;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.card-shimmer:hover::after {
+  animation: shimmer 1.5s ease-in-out;
+}
+
+/* Light mode shimmer */
+.light .card-shimmer::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(99, 102, 241, 0.08) 50%,
+    transparent 100%
+  );
+}
+
+/* ======== Typing cursor ======== */
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.typing-cursor::after {
+  content: '|';
+  animation: blink 1s step-end infinite;
+  color: var(--primary);
+  font-weight: 300;
+}
+
+/* ======== Skill badge stagger ======== */
+@keyframes popIn {
+  0% { transform: scale(0.5); opacity: 0; }
+  70% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ======== Smooth scroll ======== */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ======== Reduced motion ======== */
+@media (prefers-reduced-motion: reduce) {
+  .floating-element,
+  .float-circle,
+  .float-dot,
+  .float-hexagon,
+  .glow-pulse,
+  .card-shimmer::after {
+    animation: none !important;
+  }
+  
+  html {
+    scroll-behavior: auto;
+  }
+}
