@@ -12,9 +12,10 @@ interface ProjectCardProps {
   image?: string
   repoUrl?: string
   liveUrl?: string
+  year?: string
 }
 
-export default function ProjectCard({ id, title, description, tags, repoUrl, liveUrl }: ProjectCardProps) {
+export default function ProjectCard({ id, title, description, tags, repoUrl, liveUrl, year }: ProjectCardProps) {
   const [isHovered, setIsHovered] = useState(false)
   const router = useRouter()
 
@@ -25,7 +26,7 @@ export default function ProjectCard({ id, title, description, tags, repoUrl, liv
   return (
     <div
       onClick={handleCardClick}
-      className="group h-full p-6 rounded-xl bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 cursor-pointer hover:-translate-y-2"
+      className="group relative h-full p-6 rounded-xl bg-card border border-border hover:border-primary/50 transition-all duration-500 hover:shadow-xl hover:shadow-primary/10 cursor-pointer hover:-translate-y-2 card-shimmer overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       role="button"
@@ -37,12 +38,19 @@ export default function ProjectCard({ id, title, description, tags, repoUrl, liv
       }}
     >
       <div
-        className={`absolute inset-0 bg-gradient-to-br from-primary/10 via-accent/10 to-primary/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+        className="absolute inset-0 bg-gradient-to-br from-primary/10 via-accent/10 to-primary/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
       />
 
       <div className="space-y-4 relative z-10">
         <div>
-          <h3 className="text-xl font-semibold group-hover:text-primary transition-colors duration-300">{title}</h3>
+          <div className="flex items-center justify-between mb-1">
+            <h3 className="text-xl font-semibold group-hover:text-primary transition-colors duration-300">{title}</h3>
+            {year && (
+              <span className="text-xs text-muted-foreground font-medium px-2 py-0.5 rounded-full bg-secondary">
+                {year}
+              </span>
+            )}
+          </div>
           <p className="text-sm text-muted-foreground mt-2 line-clamp-2 group-hover:text-foreground transition-colors duration-300">
             {description}
           </p>
