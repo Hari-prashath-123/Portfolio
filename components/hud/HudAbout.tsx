@@ -1,7 +1,7 @@
 "use client"
 
-import Image from "next/image"
 import { motion } from "framer-motion"
+import ProfileCard3D from "./ProfileCard3D"
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
@@ -38,98 +38,14 @@ export default function HudAbout() {
           alignItems: "center",
         }}
       >
-        {/* ── LEFT: Phone-frame card with glow ── */}
+        {/* ── LEFT: 3D Profile Card ── */}
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
           variants={fadeUp}
-          style={{ position: "relative", width: "260px", flexShrink: 0 }}
         >
-          {/* Glow behind card */}
-          <div
-            style={{
-              position: "absolute",
-              inset: "-20px",
-              background: "radial-gradient(ellipse at center, rgba(245,245,245,0.06) 0%, transparent 70%)",
-              filter: "blur(24px)",
-              borderRadius: "32px",
-              pointerEvents: "none",
-            }}
-          />
-
-          {/* Card frame */}
-          <div
-            style={{
-              position: "relative",
-              borderRadius: "28px",
-              overflow: "hidden",
-              aspectRatio: "3/4",
-              border: "1px solid rgba(255,255,255,0.08)",
-              background: "#111",
-              boxShadow: "0 32px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.06)",
-            }}
-          >
-            <Image
-              src="/hero-front.png"
-              alt="Hariprashath B"
-              fill
-              className="object-cover object-top"
-              loading="lazy"
-            />
-
-            {/* Status chip inside card, bottom */}
-            <div
-              style={{
-                position: "absolute",
-                bottom: "1rem",
-                left: "0.75rem",
-                right: "0.75rem",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                background: "rgba(10,10,10,0.82)",
-                backdropFilter: "blur(8px)",
-                border: "1px solid rgba(255,255,255,0.1)",
-                borderRadius: "10px",
-                padding: "0.5rem 0.75rem",
-              }}
-            >
-              <span
-                className="hud-dot-pulse"
-                style={{
-                  display: "inline-block",
-                  width: "7px",
-                  height: "7px",
-                  borderRadius: "50%",
-                  background: "var(--hud-accent-green)",
-                  flexShrink: 0,
-                }}
-              />
-              <span
-                style={{
-                  fontFamily: "var(--hud-font-mono)",
-                  fontSize: "0.5625rem",
-                  color: "var(--hud-accent-green)",
-                  letterSpacing: "0.1em",
-                  fontWeight: 700,
-                }}
-              >
-                OPEN TO OPPORTUNITIES
-              </span>
-              <span
-                style={{
-                  marginLeft: "auto",
-                  fontFamily: "var(--hud-font-mono)",
-                  fontSize: "0.5625rem",
-                  color: "var(--hud-text-tertiary)",
-                  letterSpacing: "0.05em",
-                }}
-              >
-                {new Date().getFullYear()}
-              </span>
-            </div>
-          </div>
+          <ProfileCard3D />
         </motion.div>
 
         {/* ── RIGHT: Bio ── */}
