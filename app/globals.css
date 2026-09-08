@@ -1,6 +1,24 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* ======== HUD Theme — Google Fonts ======== */
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap');
+
+/* ======== HUD Design Tokens ======== */
+:root {
+  --hud-bg: #0a0a0a;
+  --hud-elevated: #131313;
+  --hud-border: #2a2a2a;
+  --hud-border-bright: #3a3a3a;
+  --hud-text-primary: #f5f5f5;
+  --hud-text-secondary: #9a9a9a;
+  --hud-text-tertiary: #5f5f5f;
+  --hud-accent-green: #4ade80;
+  --hud-font-display: 'Archivo Black', sans-serif;
+  --hud-font-body: 'Space Grotesk', sans-serif;
+  --hud-font-mono: 'JetBrains Mono', monospace;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -381,3 +399,143 @@ html {
   display: none !important;
 }
 
+/* ======== HUD Marquee Animation ======== */
+@keyframes marquee-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes marquee-right {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+.hud-marquee-left {
+  animation: marquee-left 35s linear infinite;
+}
+.hud-marquee-right {
+  animation: marquee-right 40s linear infinite;
+}
+.hud-marquee-container:hover .hud-marquee-left,
+.hud-marquee-container:hover .hud-marquee-right {
+  animation-play-state: paused;
+}
+
+/* ======== HUD Pulsing Green Dot ======== */
+@keyframes hud-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.5); }
+  50% { box-shadow: 0 0 0 6px rgba(74, 222, 128, 0); }
+}
+.hud-dot-pulse {
+  animation: hud-pulse 2s ease-in-out infinite;
+}
+
+/* ======== HUD Card Hover Lift ======== */
+.hud-card-hover {
+  transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+}
+.hud-card-hover:hover {
+  transform: translateY(-4px);
+  border-color: var(--hud-border-bright);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+
+/* ======== HUD Nav Link Underline ======== */
+.hud-nav-link {
+  position: relative;
+  font-family: var(--hud-font-body);
+  font-size: 0.8125rem;
+  color: var(--hud-text-secondary);
+  transition: color 200ms ease;
+  text-decoration: none;
+}
+.hud-nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 1px;
+  background: var(--hud-text-primary);
+  transition: width 200ms ease;
+}
+.hud-nav-link:hover {
+  color: var(--hud-text-primary);
+}
+.hud-nav-link:hover::after {
+  width: 100%;
+}
+
+/* ======== HUD Pill Buttons ======== */
+.hud-btn-filled {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  background: var(--hud-text-primary);
+  color: var(--hud-bg);
+  font-family: var(--hud-font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  transition: opacity 200ms ease, transform 200ms ease;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+}
+.hud-btn-filled:hover {
+  opacity: 0.85;
+  transform: scale(1.03);
+}
+.hud-btn-outlined {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--hud-text-primary);
+  font-family: var(--hud-font-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border: 1px solid var(--hud-border);
+  transition: border-color 200ms ease, transform 200ms ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+.hud-btn-outlined:hover {
+  border-color: var(--hud-border-bright);
+  transform: scale(1.03);
+}
+
+/* ======== HUD Section Eyebrow Pill ======== */
+.hud-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--hud-border);
+  font-family: var(--hud-font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--hud-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ======== HUD hero heading ======== */
+.hud-display {
+  font-family: var(--hud-font-display);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--hud-text-primary);
+}
+
+/* ======== Reduced motion: disable HUD marquee + scroll fx ======== */
+@media (prefers-reduced-motion: reduce) {
+  .hud-marquee-left,
+  .hud-marquee-right {
+    animation: none !important;
+  }
+  .hud-dot-pulse {
+    animation: none !important;
+  }
+}

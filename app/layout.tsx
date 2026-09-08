@@ -1,23 +1,17 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
-
 import { ThemeProvider } from "@/components/theme-provider"
 import "./globals.css"
 
-const _geist = Geist({ subsets: ["latin"] })
-const _geistMono = Geist_Mono({ subsets: ["latin"] })
-
 export const metadata: Metadata = {
-  title: "Hari Prashath - AI & Data Science Portfolio",
+  title: "Hariprashath B — AI Engineer & Full-Stack Developer",
   description:
     "AI & Data Science student specializing in Generative AI and Agentic AI projects. Explore my portfolio featuring AutoFixHub, Wire EDM simulations, and data-driven solutions.",
-
   icons: {
-    icon: "/logo.jpg",
+    icon: "/favicon.png",
   },
   openGraph: {
-    title: "Hari Prashath - AI & Data Science Portfolio",
+    title: "Hariprashath B — AI Engineer & Full-Stack Developer",
     description: "Explore my AI and Data Science projects",
     type: "website",
   },
@@ -30,7 +24,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="dark">
-      <body className={`font-sans antialiased`}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body style={{ fontFamily: "var(--hud-font-body)", background: "var(--hud-bg)" }}>
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
