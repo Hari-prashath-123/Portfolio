@@ -539,239 +539,251 @@ html {
 }
 
 /* ============================================================
-   PROFILE CARD 3D SYSTEM
-   Isolated namespace: .profile-card-*
-   Reuses: --hud-bg, --hud-elevated, --hud-border,
-           --hud-text-*, --hud-accent-green, --hud-font-*
+   PROFILE CARD 3D — pc3-* namespace
+   Matches reference: permanently tilted portrait card,
+   blurred card-shaped shadow layers behind, soft glow blob.
 ============================================================ */
 
-/* --- Keyframes --- */
-@keyframes pc-bg1-rotate {
-  0%   { transform: rotate(-8deg) scale(1.04) translateY(0px); }
-  50%  { transform: rotate(8deg)  scale(1.06) translateY(-6px); }
-  100% { transform: rotate(-8deg) scale(1.04) translateY(0px); }
-}
-@keyframes pc-bg2-rotate {
-  0%   { transform: rotate(5deg)  scale(1.08) translateY(-4px); }
-  50%  { transform: rotate(-6deg) scale(1.05) translateY(4px); }
-  100% { transform: rotate(5deg)  scale(1.08) translateY(-4px); }
-}
-@keyframes pc-glow-spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-@keyframes pc-float {
-  0%, 100% { transform: translateY(0px) translateZ(16px); }
-  50%       { transform: translateY(-8px) translateZ(20px); }
-}
-@keyframes pc-scan {
-  0%   { top: -4px; opacity: 0.5; }
-  80%  { opacity: 0.5; }
-  100% { top: 110%; opacity: 0; }
+/* ── Keyframes ─────────────────────────────────────────────── */
+@keyframes pc3-float {
+  /* Subtle vertical breathing — the JS rAF handles the tilt */
+  0%, 100% { margin-top: 0px; }
+  50%       { margin-top: -10px; }
 }
 
-/* --- Scene: perspective wrapper --- */
-.profile-card-scene {
+@keyframes pc3-bg1-drift {
+  /* Furthest back layer drifts independently */
+  0%   { transform: perspective(1100px) rotateX(2deg)  rotateY(-18deg) translateX(-18px) translateY(8px)  scale(1.06); }
+  50%  { transform: perspective(1100px) rotateX(-2deg) rotateY(-14deg) translateX(-22px) translateY(4px)  scale(1.07); }
+  100% { transform: perspective(1100px) rotateX(2deg)  rotateY(-18deg) translateX(-18px) translateY(8px)  scale(1.06); }
+}
+
+@keyframes pc3-bg2-drift {
+  /* Middle layer drifts at a different rhythm */
+  0%   { transform: perspective(1100px) rotateX(3deg)  rotateY(-6deg)  translateX(-8px)  translateY(-4px) scale(1.03); }
+  50%  { transform: perspective(1100px) rotateX(-1deg) rotateY(-4deg)  translateX(-10px) translateY(-2px) scale(1.04); }
+  100% { transform: perspective(1100px) rotateX(3deg)  rotateY(-6deg)  translateX(-8px)  translateY(-4px) scale(1.03); }
+}
+
+@keyframes pc3-glow-drift {
+  0%, 100% { transform: translate(-50%, -50%) scale(1)    rotate(0deg);   opacity: 0.45; }
+  33%       { transform: translate(-52%, -48%) scale(1.05) rotate(12deg);  opacity: 0.5;  }
+  66%       { transform: translate(-48%, -52%) scale(0.97) rotate(-8deg);  opacity: 0.4;  }
+}
+
+/* ── Scene ─────────────────────────────────────────────────── */
+.pc3-scene {
   position: relative;
-  width: 260px;
-  height: 346px; /* 3/4 ratio */
+  width: 248px;
+  height: 330px;          /* portrait 3:4 */
   flex-shrink: 0;
-  perspective: 1200px;
-  perspective-origin: center center;
+  /* perspective is applied per-element via JS for accurate depth */
 }
 
-/* --- Glow: conic rotating radial behind everything --- */
-.profile-card-glow {
+/* ── Ambient glow blob ─────────────────────────────────────── */
+.pc3-glow-blob {
   position: absolute;
-  inset: -32px;
+  width: 320px;
+  height: 320px;
+  top: 50%;
+  left: 50%;
   border-radius: 50%;
-  background: conic-gradient(
-    from 0deg,
-    transparent 0%,
-    rgba(255,255,255,0.04) 20%,
-    rgba(255,255,255,0.08) 40%,
-    transparent 60%,
-    rgba(255,255,255,0.04) 80%,
-    transparent 100%
+  background: radial-gradient(
+    ellipse at center,
+    rgba(220,220,220,0.10) 0%,
+    rgba(160,160,160,0.05) 40%,
+    transparent 70%
   );
-  filter: blur(20px);
-  animation: pc-glow-spin 12s linear infinite;
+  filter: blur(32px);
+  animation: pc3-glow-drift 9s ease-in-out infinite;
   pointer-events: none;
   z-index: 0;
 }
 
-/* --- Background layer 1 (furthest back) --- */
-.profile-card-background-1 {
+/* ── Background shadow-cards ───────────────────────────────── */
+/* Both are card-shaped, blurred, sitting behind the main card */
+.pc3-bg-card {
   position: absolute;
-  inset: -6px;
-  border-radius: 32px;
-  background: var(--hud-elevated);
-  border: 1px solid rgba(255,255,255,0.06);
-  box-shadow:
-    0 8px 32px rgba(0,0,0,0.5),
-    inset 0 1px 0 rgba(255,255,255,0.04);
-  transform-origin: center center;
-  animation: pc-bg1-rotate 10s ease-in-out infinite;
+  inset: 0;
+  border-radius: 28px;
+  pointer-events: none;
   will-change: transform;
+}
+
+.pc3-bg-card-1 {
+  background: #111;
+  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.8);
+  filter: blur(2px);
+  opacity: 0.70;
   z-index: 1;
-  backdrop-filter: blur(4px);
+  animation: pc3-bg1-drift 12s ease-in-out infinite;
 }
 
-/* --- Background layer 2 (middle) --- */
-.profile-card-background-2 {
-  position: absolute;
-  inset: -3px;
-  border-radius: 30px;
+.pc3-bg-card-2 {
   background: linear-gradient(
-    135deg,
-    rgba(255,255,255,0.04) 0%,
-    transparent 50%,
-    rgba(255,255,255,0.02) 100%
+    145deg,
+    rgba(40,40,40,0.9) 0%,
+    rgba(20,20,20,0.7) 100%
   );
-  border: 1px solid rgba(255,255,255,0.09);
-  box-shadow: 0 12px 48px rgba(0,0,0,0.6);
-  transform-origin: center center;
-  animation: pc-bg2-rotate 14s ease-in-out infinite;
-  will-change: transform;
+  border: 1px solid rgba(255,255,255,0.07);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.7);
+  filter: blur(0.5px);
+  opacity: 0.85;
   z-index: 2;
-  backdrop-filter: blur(2px);
+  animation: pc3-bg2-drift 9s ease-in-out infinite;
 }
 
-/* --- Main card --- */
-.profile-card {
+/* ── Main card ─────────────────────────────────────────────── */
+.pc3-card {
   position: absolute;
   inset: 0;
   border-radius: 28px;
   overflow: hidden;
   background: #0f0f0f;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.12);
   box-shadow:
-    0 32px 80px rgba(0,0,0,0.75),
-    0 4px 16px rgba(0,0,0,0.5),
-    inset 0 1px 0 rgba(255,255,255,0.08);
-  transform-style: preserve-3d;
-  animation: pc-float 6s ease-in-out infinite;
-  will-change: transform;
+    0 40px 80px rgba(0,0,0,0.80),
+    0  4px 20px rgba(0,0,0,0.60),
+    inset 0 1px 0 rgba(255,255,255,0.10);
   z-index: 3;
-  cursor: none;
-  transition: box-shadow 0.3s ease;
+  will-change: transform;
+  transition: box-shadow 0.4s ease;
+  /* float breathing handled by wrapper margin animation */
+  animation: pc3-float 7s ease-in-out infinite;
 }
 
-.profile-card:hover {
-  box-shadow:
-    0 40px 100px rgba(0,0,0,0.85),
-    0 8px 24px rgba(0,0,0,0.6),
-    inset 0 1px 0 rgba(255,255,255,0.12);
-}
-
-/* Pause float when user is interacting (tilting) */
-.profile-card.pc-interacting {
-  animation-play-state: paused;
-}
-
-/* --- Glass gradient overlay on top of image --- */
-.profile-card-overlay {
+/* ── Glass overlay on photo ────────────────────────────────── */
+.pc3-overlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(
-    160deg,
-    rgba(255,255,255,0.03) 0%,
-    transparent 50%,
-    rgba(0,0,0,0.3) 100%
+    165deg,
+    rgba(255,255,255,0.04)  0%,
+    transparent             45%,
+    rgba(0,0,0,0.35)       100%
   );
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* --- Glare/highlight that follows mouse --- */
-.profile-card-highlight {
-  position: absolute;
-  inset: 0;
-  border-radius: 28px;
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(255,255,255,0.08) 0%,
-    transparent 60%
-  );
-  opacity: 0;
-  transition: opacity 0.3s ease;
   pointer-events: none;
   z-index: 2;
 }
 
-.profile-card:hover .profile-card-highlight {
-  opacity: 1;
-}
-
-/* --- Scan line effect --- */
-.profile-card-scanline {
+/* ── Mouse glare ───────────────────────────────────────────── */
+.pc3-glare {
   position: absolute;
-  left: 0; right: 0;
-  top: -4px;
-  height: 2px;
-  background: linear-gradient(
-    to right,
-    transparent,
-    rgba(74,222,128,0.4),
-    transparent
-  );
-  animation: pc-scan 4s linear infinite;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.35s ease;
   pointer-events: none;
   z-index: 3;
 }
 
-/* --- HUD corner brackets --- */
-.profile-card-corner {
+/* ── Corner brackets ───────────────────────────────────────── */
+.pc3-corner {
   position: absolute;
+  display: block;
   width: 14px;
   height: 14px;
-  z-index: 4;
+  z-index: 5;
   pointer-events: none;
 }
-.profile-card-corner::before,
-.profile-card-corner::after {
+.pc3-corner::before,
+.pc3-corner::after {
   content: '';
   position: absolute;
-  background: rgba(74,222,128,0.5);
+  background: rgba(74,222,128,0.55);
 }
-.profile-card-corner::before { width: 100%; height: 1.5px; top: 0; left: 0; }
-.profile-card-corner::after  { width: 1.5px; height: 100%; top: 0; left: 0; }
+.pc3-corner::before { width: 100%;   height: 1.5px; top: 0; left: 0; }
+.pc3-corner::after  { width: 1.5px;  height: 100%;  top: 0; left: 0; }
+.pc3-tl { top: 10px;    left: 10px;  }
+.pc3-tr { top: 10px;    right: 10px; transform: scaleX(-1); }
+.pc3-bl { bottom: 10px; left: 10px;  transform: scaleY(-1); }
+.pc3-br { bottom: 10px; right: 10px; transform: scale(-1,-1); }
 
-.profile-card-corner.tl { top: 10px; left: 10px; }
-.profile-card-corner.tr { top: 10px; right: 10px; transform: scaleX(-1); }
-.profile-card-corner.bl { bottom: 10px; left: 10px; transform: scaleY(-1); }
-.profile-card-corner.br { bottom: 10px; right: 10px; transform: scale(-1,-1); }
+/* ── Status chip ───────────────────────────────────────────── */
+.pc3-chip {
+  position: absolute;
+  bottom: 0.875rem;
+  left: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(10,10,10,0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 9px;
+  padding: 0.45rem 0.7rem;
+  z-index: 5;
+}
+.pc3-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--hud-accent-green);
+  flex-shrink: 0;
+}
+.pc3-chip-label {
+  font-family: var(--hud-font-mono);
+  font-size: 0.5rem;
+  font-weight: 700;
+  color: var(--hud-accent-green);
+  letter-spacing: 0.1em;
+}
+.pc3-chip-year {
+  margin-left: auto;
+  font-family: var(--hud-font-mono);
+  font-size: 0.5rem;
+  color: var(--hud-text-tertiary);
+}
 
-/* ======== Reduced motion: 3D profile card ======== */
+/* ── Profile label ─────────────────────────────────────────── */
+.pc3-top-label {
+  position: absolute;
+  top: 0.6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--hud-font-mono);
+  font-size: 0.4rem;
+  letter-spacing: 0.28em;
+  color: rgba(245,245,245,0.28);
+  white-space: nowrap;
+  z-index: 5;
+}
+
+/* ── Reduced motion ────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .profile-card-glow,
-  .profile-card-background-1,
-  .profile-card-background-2,
-  .profile-card,
-  .profile-card-scanline {
+  .pc3-glow-blob,
+  .pc3-bg-card-1,
+  .pc3-bg-card-2,
+  .pc3-card {
     animation: none !important;
   }
-  .profile-card {
-    transform: none !important;
+  .pc3-card {
+    transform: perspective(1100px) rotateX(4deg) rotateY(-10deg) !important;
+  }
+  .pc3-bg-card-1 {
+    transform: perspective(1100px) rotateX(2deg) rotateY(-18deg) translateX(-18px) scale(1.06) !important;
+  }
+  .pc3-bg-card-2 {
+    transform: perspective(1100px) rotateX(3deg) rotateY(-6deg) translateX(-8px) scale(1.03) !important;
   }
 }
 
-/* ======== Responsive ======== */
+/* ── Responsive ────────────────────────────────────────────── */
 @media (max-width: 1024px) {
-  .profile-card-scene {
-    width: 220px;
-    height: 293px;
-  }
+  .pc3-scene { width: 216px; height: 288px; }
 }
 @media (max-width: 767px) {
-  .profile-card-scene {
-    width: 200px;
-    height: 266px;
-    perspective: 800px;
+  .pc3-scene {
+    width: 196px;
+    height: 260px;
     margin: 0 auto;
   }
-  .profile-card-background-1,
-  .profile-card-background-2 {
-    animation-duration: 16s;
-  }
+  .pc3-bg-card-1 { animation-duration: 18s; }
+  .pc3-bg-card-2 { animation-duration: 13s; }
 }
+
+
+/* --- Keyframes --- */
+
