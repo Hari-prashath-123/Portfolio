@@ -1,33 +1,33 @@
 "use client"
 
 import { useRef, useState, useEffect } from "react"
-import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion"
+import { motion, useScroll, useMotionValueEvent } from "framer-motion"
 import Image from "next/image"
 
-// 7 photos for full 360° head-turn illusion
+// All 7 photos for the 360° scroll-driven turn — safe ASCII filenames
 const PHOTOS = [
-  { src: "/front.png",            alt: "Hariprashath - Front view" },
-  { src: "/45° left.png",         alt: "Hariprashath - 45° left" },
-  { src: "/Exact left side.png",  alt: "Hariprashath - Left side" },
-  { src: "/Back 45 left.png",     alt: "Hariprashath - Back 45° left" },
-  { src: "/Back.png",             alt: "Hariprashath - Back view" },
-  { src: "/Back 45° right.png",   alt: "Hariprashath - Back 45° right" },
-  { src: "/Exact right side.png", alt: "Hariprashath - Right side" },
+  "/hero-front.png",
+  "/hero-45left.png",
+  "/hero-leftside.png",
+  "/hero-back45left.png",
+  "/hero-back.png",
+  "/hero-back45right.png",
+  "/hero-rightside.png",
 ]
 
 const HEADLINES = [
   {
-    heading: "CREATIVE\nDEVELOPER",
-    tag: "// USER-FOCUSED INTERFACES",
+    heading: ["CREATIVE", "DEVELOPER"],
+    tag: "// TURNING IDEAS INTO REALITY",
     sub: "Available for hire. Building fast, responsive web applications using modern tech stacks.",
   },
   {
-    heading: "FULL-STACK\nENGINEER",
+    heading: ["FULL-STACK", "ENGINEER"],
     tag: "// ROBUST BACKEND ARCHITECTURE",
     sub: "Architecting secure REST APIs, databases, and scalable server infrastructure.",
   },
   {
-    heading: "AI & GENAI\nSYSTEMS",
+    heading: ["AI & GENAI", "SYSTEMS"],
     tag: "// INTELLIGENT AUTOMATION",
     sub: "Building agentic AI tools, LLM-powered apps, and automation pipelines.",
   },
@@ -37,7 +37,7 @@ export default function HudHero() {
   const heroRef = useRef<HTMLDivElement>(null)
   const [activePhoto, setActivePhoto] = useState(0)
   const [activeHeadline, setActiveHeadline] = useState(0)
-  const [headlineVisible, setHeadlineVisible] = useState(true)
+  const [headlineKey, setHeadlineKey] = useState(0)
   const [scrollStarted, setScrollStarted] = useState(false)
   const prefersReduced = useRef(false)
 
@@ -50,22 +50,19 @@ export default function HudHero() {
     offset: ["start start", "end start"],
   })
 
-  // Map scroll to photo index (0–6)
   useMotionValueEvent(scrollYProgress, "change", (v) => {
     if (prefersReduced.current) return
-    if (v > 0.01) setScrollStarted(true)
-    else setScrollStarted(false)
+    setScrollStarted(v > 0.02)
 
-    const idx = Math.min(Math.floor(v * PHOTOS.length), PHOTOS.length - 1)
-    setActivePhoto(idx)
+    // Map to photo index 0–6
+    const photoIdx = Math.min(Math.floor(v * PHOTOS.length), PHOTOS.length - 1)
+    setActivePhoto(photoIdx)
 
-    const newHeadline = v < 0.33 ? 0 : v < 0.66 ? 1 : 2
-    if (newHeadline !== activeHeadline) {
-      setHeadlineVisible(false)
-      setTimeout(() => {
-        setActiveHeadline(newHeadline)
-        setHeadlineVisible(true)
-      }, 180)
+    // Headline swap at 1/3 and 2/3
+    const newHL = v < 0.33 ? 0 : v < 0.66 ? 1 : 2
+    if (newHL !== activeHeadline) {
+      setActiveHeadline(newHL)
+      setHeadlineKey((k) => k + 1)
     }
   })
 
@@ -75,244 +72,213 @@ export default function HudHero() {
     <section
       id="home"
       ref={heroRef}
-      style={{
-        position: "relative",
-        minHeight: "200vh", // tall for scroll scrubbing
-        background: "var(--hud-bg)",
-      }}
+      style={{ position: "relative", height: "200vh", background: "var(--hud-bg)" }}
     >
-      {/* Sticky viewport that holds the visible hero */}
-      <div
-        style={{
-          position: "sticky",
-          top: 0,
-          height: "100vh",
-          display: "flex",
-          alignItems: "center",
-          overflow: "hidden",
-        }}
-      >
-        {/* Radial glow behind photo */}
-        <div
-          style={{
-            position: "absolute",
-            left: "50%",
-            top: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "600px",
-            height: "600px",
-            background: "radial-gradient(ellipse, rgba(245,245,245,0.04) 0%, transparent 70%)",
-            filter: "blur(60px)",
-            pointerEvents: "none",
-            zIndex: 0,
-          }}
-        />
+      {/* ── STICKY VIEWPORT ── */}
+      <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
 
-        {/* Corner decorators */}
-        <div style={{ position: "absolute", top: "80px", left: "2rem", fontFamily: "var(--hud-font-mono)", fontSize: "0.5625rem", color: "var(--hud-text-tertiary)", letterSpacing: "0.2em" }}>
-          {`// PORTFOLIO 2026`}
-        </div>
-        <div style={{ position: "absolute", top: "80px", right: "2rem", fontFamily: "var(--hud-font-mono)", fontSize: "0.5625rem", color: "var(--hud-text-tertiary)", letterSpacing: "0.2em" }}>
-          {`[ AI & FULL-STACK ]`}
-        </div>
-
-        {/* Grid layout */}
-        <div
-          style={{
-            position: "relative",
-            zIndex: 1,
-            width: "100%",
-            maxWidth: "1280px",
-            margin: "0 auto",
-            padding: "0 2rem",
-            display: "grid",
-            gridTemplateColumns: "1fr auto 1fr",
-            alignItems: "center",
-            gap: "3rem",
-          }}
-        >
-          {/* LEFT — headline text */}
-          <div style={{ minWidth: 0 }}>
-            <div style={{ fontFamily: "var(--hud-font-mono)", fontSize: "0.6875rem", color: "var(--hud-text-tertiary)", letterSpacing: "0.12em", marginBottom: "1.25rem" }}>
-              HI, I&apos;M HARIPRASHATH —{" "}
-              <span style={{ borderBottom: "1px solid var(--hud-text-tertiary)", paddingBottom: "1px" }}>AI ENGINEER</span>
-            </div>
-
+        {/* ── FULL-BLEED PHOTO BACKGROUND ── */}
+        <div style={{ position: "absolute", inset: 0 }}>
+          {PHOTOS.map((src, i) => (
             <motion.div
-              key={activeHeadline}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: headlineVisible ? 1 : 0, y: headlineVisible ? 0 : -8 }}
-              transition={{ duration: 0.2 }}
+              key={src}
+              animate={{ opacity: i === activePhoto ? 1 : 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              style={{ position: "absolute", inset: 0 }}
             >
-              <h1
-                className="hud-display"
-                style={{
-                  fontSize: "clamp(3rem, 6vw, 6.5rem)",
-                  whiteSpace: "pre-line",
-                  marginBottom: "2rem",
-                }}
-              >
-                {hl.heading}
-              </h1>
+              <Image
+                src={src}
+                alt={`Hariprashath view ${i}`}
+                fill
+                className="object-cover object-center"
+                priority={i === 0}
+                loading={i === 0 ? "eager" : "lazy"}
+              />
             </motion.div>
+          ))}
 
-            {/* Bottom buttons */}
-            <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-              <a href="#projects" className="hud-btn-filled">View My Work</a>
-              <a href="#contact" className="hud-btn-outlined">Contact Me</a>
-            </div>
-          </div>
+          {/* Left vignette — where text lives */}
+          <div style={{
+            position: "absolute", inset: 0,
+            background: "linear-gradient(to right, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.7) 38%, rgba(10,10,10,0.15) 60%, rgba(10,10,10,0.5) 100%)",
+          }} />
+          {/* Bottom vignette */}
+          <div style={{
+            position: "absolute", inset: 0,
+            background: "linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 40%)",
+          }} />
+          {/* Top vignette for navbar */}
+          <div style={{
+            position: "absolute", inset: 0,
+            background: "linear-gradient(to bottom, rgba(10,10,10,0.6) 0%, transparent 20%)",
+          }} />
+        </div>
 
-          {/* CENTER — photo stack */}
-          <div
+        {/* ── CONTENT LAYER ── */}
+        <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "0 3rem 4rem" }}>
+
+          {/* SCROLL hint — top-left */}
+          <motion.div
+            animate={{ opacity: scrollStarted ? 0 : 0.6 }}
+            transition={{ duration: 0.4 }}
             style={{
-              position: "relative",
-              width: "clamp(220px, 28vw, 380px)",
-              aspectRatio: "3/4",
-              flexShrink: 0,
+              position: "absolute",
+              top: "78px",
+              left: "3rem",
+              fontFamily: "var(--hud-font-mono)",
+              fontSize: "0.5625rem",
+              color: "var(--hud-text-secondary)",
+              letterSpacing: "0.2em",
             }}
           >
-            {PHOTOS.map((photo, i) => (
-              <motion.div
-                key={photo.src}
-                animate={{ opacity: i === activePhoto ? 1 : 0 }}
-                transition={{ duration: 0.25, ease: "easeInOut" }}
-                style={{
-                  position: i === 0 ? "relative" : "absolute",
-                  inset: 0,
-                  borderRadius: "16px",
-                  overflow: "hidden",
-                }}
-              >
-                <Image
-                  src={photo.src}
-                  alt={photo.alt}
-                  fill
-                  className="object-cover object-top"
-                  priority={i === 0}
-                  loading={i === 0 ? "eager" : "lazy"}
-                />
-              </motion.div>
-            ))}
+            ↓ SCROLL TO SCRUB TIMELINE
+          </motion.div>
 
-            {/* Scroll hint overlay at bottom */}
-            <motion.div
-              animate={{ opacity: scrollStarted ? 0 : 1 }}
-              transition={{ duration: 0.4 }}
-              style={{
-                position: "absolute",
-                bottom: "1rem",
-                left: "50%",
-                transform: "translateX(-50%)",
+          {/* BOTTOM LAYOUT — two columns */}
+          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "2rem" }}>
+
+            {/* LEFT — headline */}
+            <div style={{ flex: "0 0 auto", maxWidth: "520px" }}>
+              {/* Small label */}
+              <div style={{
                 fontFamily: "var(--hud-font-mono)",
-                fontSize: "0.5625rem",
-                color: "var(--hud-text-tertiary)",
+                fontSize: "0.6875rem",
+                color: "var(--hud-text-secondary)",
                 letterSpacing: "0.15em",
-                whiteSpace: "nowrap",
-                background: "rgba(10,10,10,0.7)",
-                padding: "0.3rem 0.75rem",
-                borderRadius: "999px",
-                border: "1px solid var(--hud-border)",
-              }}
-            >
-              ↓ SCROLL TO SCRUB TIMELINE
-            </motion.div>
-          </div>
+                marginBottom: "0.75rem",
+              }}>
+                HI, I&apos;M{" "}
+                <span style={{ borderBottom: "1px solid var(--hud-text-secondary)", paddingBottom: "1px" }}>
+                  HARIPRASHATH
+                </span>
+              </div>
 
-          {/* RIGHT — tag + subtext */}
-          <div style={{ minWidth: 0 }}>
-            <motion.div
-              key={`tag-${activeHeadline}`}
-              initial={{ opacity: 0, x: 12 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.25 }}
-            >
-              <div
-                style={{
+              {/* Animated headline */}
+              <motion.div
+                key={headlineKey}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              >
+                <h1
+                  style={{
+                    fontFamily: "var(--hud-font-display)",
+                    fontSize: "clamp(4rem, 9vw, 8.5rem)",
+                    lineHeight: 0.9,
+                    letterSpacing: "-0.02em",
+                    color: "var(--hud-text-primary)",
+                    margin: 0,
+                    textShadow: "0 2px 40px rgba(0,0,0,0.5)",
+                  }}
+                >
+                  {hl.heading[0]}
+                  <br />
+                  {hl.heading[1]}
+                </h1>
+              </motion.div>
+            </div>
+
+            {/* RIGHT — tag + subtext + buttons */}
+            <div style={{ flex: "0 0 auto", maxWidth: "300px", textAlign: "right", paddingBottom: "0.25rem" }}>
+              <motion.div
+                key={`tag-${headlineKey}`}
+                initial={{ opacity: 0, x: 16 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 }}
+              >
+                <div style={{
                   fontFamily: "var(--hud-font-mono)",
-                  fontSize: "0.6875rem",
-                  color: "var(--hud-accent-green)",
-                  letterSpacing: "0.1em",
-                  marginBottom: "0.75rem",
+                  fontSize: "0.5625rem",
+                  color: "var(--hud-text-tertiary)",
+                  letterSpacing: "0.18em",
+                  marginBottom: "0.5rem",
                   fontStyle: "italic",
-                }}
-              >
-                {hl.tag}
-              </div>
-              <p
-                style={{
+                }}>
+                  {hl.tag}
+                </div>
+                <p style={{
                   fontFamily: "var(--hud-font-body)",
-                  fontSize: "0.875rem",
+                  fontSize: "0.8125rem",
                   color: "var(--hud-text-secondary)",
-                  lineHeight: 1.7,
-                  maxWidth: "260px",
-                }}
-              >
-                {hl.sub}
-              </p>
-            </motion.div>
+                  lineHeight: 1.65,
+                  margin: "0 0 1.5rem",
+                }}>
+                  {hl.sub}
+                </p>
+              </motion.div>
 
-            {/* Scroll progress indicator */}
-            <div style={{ marginTop: "2rem" }}>
-              <div style={{ display: "flex", gap: "6px" }}>
-                {HEADLINES.map((_, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      height: "2px",
-                      flex: 1,
-                      borderRadius: "2px",
-                      background: i === activeHeadline ? "var(--hud-text-primary)" : "var(--hud-border)",
-                      transition: "background 300ms ease",
-                    }}
-                  />
-                ))}
-              </div>
-              <div style={{ fontFamily: "var(--hud-font-mono)", fontSize: "0.5625rem", color: "var(--hud-text-tertiary)", letterSpacing: "0.12em", marginTop: "0.5rem" }}>
-                {`0${activeHeadline + 1} / 03`}
+              {/* Buttons */}
+              <div style={{ display: "flex", gap: "0.75rem", justifyContent: "flex-end" }}>
+                <a href="#projects" className="hud-btn-filled">View My Work</a>
+                <a href="#contact" className="hud-btn-outlined">Contact Me</a>
               </div>
             </div>
           </div>
+
+          {/* Scroll progress bar */}
+          <motion.div
+            animate={{ opacity: scrollStarted ? 1 : 0 }}
+            style={{
+              position: "absolute",
+              bottom: "1.5rem",
+              left: "50%",
+              transform: "translateX(-50%)",
+              display: "flex",
+              gap: "6px",
+              alignItems: "center",
+            }}
+          >
+            {HEADLINES.map((_, i) => (
+              <div
+                key={i}
+                style={{
+                  width: i === activeHeadline ? "32px" : "16px",
+                  height: "2px",
+                  borderRadius: "2px",
+                  background: i === activeHeadline ? "var(--hud-text-primary)" : "rgba(245,245,245,0.2)",
+                  transition: "all 300ms ease",
+                }}
+              />
+            ))}
+          </motion.div>
         </div>
 
-        {/* Mobile layout (< md): simple centered layout */}
+        {/* ── MOBILE LAYOUT ── */}
         <style>{`
-          @media (max-width: 767px) {
-            #hud-hero-grid { display: none !important; }
-            #hud-hero-mobile { display: flex !important; }
+          @media (max-width: 639px) {
+            #hud-hero-desktop { display: none !important; }
+            #hud-hero-mobile-overlay { display: flex !important; }
           }
-          @media (min-width: 768px) {
-            #hud-hero-mobile { display: none !important; }
+          @media (min-width: 640px) {
+            #hud-hero-mobile-overlay { display: none !important; }
           }
         `}</style>
 
-        {/* Mobile hero */}
+        {/* Mobile: just static front photo + text */}
         <div
-          id="hud-hero-mobile"
+          id="hud-hero-mobile-overlay"
           style={{
             display: "none",
             position: "absolute",
             inset: 0,
             flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "5rem 1.5rem 2rem",
-            gap: "1.5rem",
-            zIndex: 1,
+            alignItems: "flex-start",
+            justifyContent: "flex-end",
+            padding: "2rem 1.5rem 3rem",
           }}
         >
-          <div style={{ position: "relative", width: "200px", height: "260px", borderRadius: "16px", overflow: "hidden" }}>
-            <Image src="/front.png" alt="Hariprashath" fill className="object-cover object-top" priority />
+          <div style={{ fontFamily: "var(--hud-font-mono)", fontSize: "0.625rem", color: "var(--hud-text-secondary)", letterSpacing: "0.15em", marginBottom: "0.5rem" }}>
+            HI, I&apos;M HARIPRASHATH
           </div>
-          <div style={{ textAlign: "center" }}>
-            <div style={{ fontFamily: "var(--hud-font-mono)", fontSize: "0.625rem", color: "var(--hud-text-tertiary)", letterSpacing: "0.12em", marginBottom: "0.75rem" }}>HI, I&apos;M HARIPRASHATH</div>
-            <h1 className="hud-display" style={{ fontSize: "2.75rem" }}>CREATIVE<br />DEVELOPER</h1>
-          </div>
+          <h1 style={{ fontFamily: "var(--hud-font-display)", fontSize: "3.5rem", lineHeight: 0.9, color: "var(--hud-text-primary)", margin: "0 0 1.5rem" }}>
+            CREATIVE<br />DEVELOPER
+          </h1>
           <div style={{ display: "flex", gap: "0.75rem" }}>
             <a href="#projects" className="hud-btn-filled">View My Work</a>
             <a href="#contact" className="hud-btn-outlined">Contact Me</a>
           </div>
         </div>
+
       </div>
     </section>
   )

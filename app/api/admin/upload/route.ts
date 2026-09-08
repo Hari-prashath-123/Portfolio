@@ -10,7 +10,7 @@ const ALLOWED_TYPES: Record<string, { mime: string[]; ext: string[] }> = {
 }
 
 const FILE_NAMES: Record<string, string> = {
-  profile: "Profile.jpeg",
+  profile: "hero-front.png",
   logo: "logo.jpg",
   resume: "resume.pdf",
 }
