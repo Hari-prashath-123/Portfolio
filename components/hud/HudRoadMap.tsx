@@ -104,15 +104,49 @@ export default function HudRoadMap() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="hud-card-hover"
-              style={{
-                position: "relative",
-                background: "var(--hud-elevated)",
-                border: "1px solid var(--hud-border)",
-                borderRadius: "16px",
-                padding: "1.75rem",
-              }}
+              className="hud-glass-card"
+              style={{ padding: "1.75rem" }}
             >
+              {/* HUD corner brackets */}
+              <span className="hgc-corner tl" />
+              <span className="hgc-corner tr" />
+              <span className="hgc-corner bl" />
+              <span className="hgc-corner br" />
+
+              {/* Number dot */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: "1.25rem",
+                  right: "1.25rem",
+                  width: "28px",
+                  height: "28px",
+                  borderRadius: "50%",
+                  border: "1px solid var(--hud-border)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontFamily: "var(--hud-font-mono)",
+                  fontSize: "0.625rem",
+                  color: "var(--hud-text-tertiary)",
+                }}
+              >
+                {item.num}
+              </div>
+
+              <div style={{ fontFamily: "var(--hud-font-mono)", fontSize: "0.625rem", color: "var(--hud-accent-green)", letterSpacing: "0.1em", marginBottom: "0.75rem" }}>
+                {item.tag}
+              </div>
+              <h3 style={{ fontFamily: "var(--hud-font-body)", fontWeight: 700, fontSize: "1.0625rem", color: "var(--hud-text-primary)", marginBottom: "0.75rem" }}>
+                {item.title}
+              </h3>
+              <p style={{ fontFamily: "var(--hud-font-body)", fontSize: "0.875rem", color: "var(--hud-text-secondary)", lineHeight: 1.65, marginBottom: "1.25rem" }}>
+                {item.desc}
+              </p>
+              <span className="hgc-badge">{item.badge}</span>
+            </motion.div>
+          ))}
+
               {/* Number dot */}
               <div
                 style={{

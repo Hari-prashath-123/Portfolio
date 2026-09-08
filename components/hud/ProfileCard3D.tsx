@@ -1,39 +1,48 @@
 "use client"
 
 /**
- * ProfileCard3D — Redesigned to match reference image
+ * ProfileCard3D — v3
  *
- * Visual: Portrait card with permanent 3D tilt in perspective,
- * 2 blurred card-shaped "shadow" layers behind it at different
- * angles, and a soft ambient glow blob.
+ * Architecture (separation of concerns):
+ *   .pc3-scene              → perspective container, overflow: visible
+ *   .pc3-glow-blob          → soft ambient glow, CSS animated independently
+ *   .pc3-bg-card-1/2        → shadow cards behind main, CSS animated independently
+ *   .pc3-float-wrap         → ONLY handles vertical float (translateY) via CSS animation
+ *     .pc3-card             → ONLY handles 3D tilt via JS transform
+ *       image + overlays
  *
- * Tuneable constants at the top of this file:
- *   BASE_TILT_Y   — how much the card leans (Y axis, default -10deg)
- *   BASE_TILT_X   — forward/back tilt (X axis, default 4deg)
- *   MAX_MOUSE     — extra mouse-follow tilt (default 6deg on top of base)
- *   LERP          — mouse smoothing (0.06 = slower/smoother)
+ * This way CSS float and JS tilt NEVER write to the same element's transform.
+ *
+ * Tuning:
+ *   BASE_TILT_Y  — permanent Y lean, matches reference left-leaning (default -12)
+ *   BASE_TILT_X  — permanent X tilt forward (default 5)
+ *   MAX_MOUSE    — extra degrees from mouse (default 6)
+ *   LERP         — mouse smoothing lag (default 0.08)
+ *   PERSPECTIVE  — 3D depth (default 1000px)
  */
 
 import { useEffect, useRef } from "react"
 import Image from "next/image"
 
-// ── Config ───────────────────────────────────────────────────────────────────
-const BASE_TILT_Y = -10  // degrees — permanent Y lean
-const BASE_TILT_X =  4   // degrees — permanent X lean
-const MAX_MOUSE   =  6   // degrees extra from mouse movement
-const LERP        = 0.07 // 0–1: lower = smoother lag
+const BASE_TILT_Y  = -12   // permanent Y lean — negative = leans left like reference
+const BASE_TILT_X  =  5    // permanent forward pitch
+const MAX_MOUSE    =  6    // max extra degrees from mouse
+const LERP         =  0.08
+const PERSPECTIVE  = 1000
 
-// ── Photos ───────────────────────────────────────────────────────────────────
-// Only the front photo is shown; change to enable crossfade
-const MAIN_PHOTO = "/hero-front.png"
+const PHOTO = "/hero-front.png"
 
 export default function ProfileCard3D() {
-  const sceneRef   = useRef<HTMLDivElement>(null)
-  const cardRef    = useRef<HTMLDivElement>(null)
-  const glareRef   = useRef<HTMLDivElement>(null)
-  const rafRef     = useRef<number>(0)
-  const tgt        = useRef({ x: BASE_TILT_X, y: BASE_TILT_Y })
-  const cur        = useRef({ x: BASE_TILT_X, y: BASE_TILT_Y })
+  const sceneRef = useRef<HTMLDivElement>(null)
+  const cardRef  = useRef<HTMLDivElement>(null)
+  const glareRef = useRef<HTMLDivElement>(null)
+  const rafRef   = useRef<number>(0)
+  const tgt      = useRef({ x: BASE_TILT_X, y: BASE_TILT_Y })
+  const cur      = useRef({ x: BASE_TILT_X, y: BASE_TILT_Y })
+  const looping  = useRef(false)
+
+  const buildTransform = (rx: number, ry: number) =>
+    `perspective(${PERSPECTIVE}px) rotateX(${rx}deg) rotateY(${ry}deg)`
 
   useEffect(() => {
     const scene = sceneRef.current
@@ -42,52 +51,57 @@ export default function ProfileCard3D() {
     if (!scene || !card || !glare) return
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    if (reduced) {
-      card.style.transform = `perspective(1100px) rotateX(${BASE_TILT_X}deg) rotateY(${BASE_TILT_Y}deg)`
-      return
-    }
 
-    // Set initial tilt so card appears tilted immediately
-    cur.current = { x: BASE_TILT_X, y: BASE_TILT_Y }
-    card.style.transform = `perspective(1100px) rotateX(${BASE_TILT_X}deg) rotateY(${BASE_TILT_Y}deg) translateZ(8px)`
+    // Apply base tilt immediately so card isn't flat on load
+    card.style.transform = buildTransform(BASE_TILT_X, BASE_TILT_Y)
 
-    let hovering = false
+    if (reduced) return
 
-    const applyTilt = () => {
+    const loop = () => {
       cur.current.x += (tgt.current.x - cur.current.x) * LERP
       cur.current.y += (tgt.current.y - cur.current.y) * LERP
-      card.style.transform = `perspective(1100px) rotateX(${cur.current.x}deg) rotateY(${cur.current.y}deg) translateZ(12px)`
-      rafRef.current = requestAnimationFrame(applyTilt)
+      card.style.transform = buildTransform(cur.current.x, cur.current.y)
+
+      const dx = Math.abs(tgt.current.x - cur.current.x)
+      const dy = Math.abs(tgt.current.y - cur.current.y)
+      if (dx > 0.02 || dy > 0.02) {
+        rafRef.current = requestAnimationFrame(loop)
+      } else {
+        looping.current = false
+        card.style.transform = buildTransform(tgt.current.x, tgt.current.y)
+      }
     }
 
-    const startLoop = () => { if (!hovering) { hovering = true; applyTilt() } }
+    const startLoop = () => {
+      if (!looping.current) {
+        looping.current = true
+        rafRef.current = requestAnimationFrame(loop)
+      }
+    }
 
     const onMove = (e: MouseEvent) => {
       const rect = scene.getBoundingClientRect()
-      const nx = ((e.clientX - rect.left) / rect.width  - 0.5) * 2  // -1..+1
-      const ny = ((e.clientY - rect.top)  / rect.height - 0.5) * 2
-
+      const nx = ((e.clientX - rect.left)  / rect.width  - 0.5) * 2
+      const ny = ((e.clientY - rect.top)   / rect.height - 0.5) * 2
       tgt.current.x = BASE_TILT_X + ny * MAX_MOUSE
-      tgt.current.y = BASE_TILT_Y - nx * MAX_MOUSE // invert X so card tilts toward cursor
+      tgt.current.y = BASE_TILT_Y - nx * MAX_MOUSE
 
-      // move glare
+      // Move glare to cursor position
       const px = ((e.clientX - rect.left) / rect.width)  * 100
       const py = ((e.clientY - rect.top)  / rect.height) * 100
       glare.style.opacity = "1"
-      glare.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(255,255,255,0.10) 0%, transparent 55%)`
+      glare.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(255,255,255,0.12) 0%, transparent 55%)`
       startLoop()
     }
 
     const onLeave = () => {
       tgt.current = { x: BASE_TILT_X, y: BASE_TILT_Y }
       glare.style.opacity = "0"
+      startLoop()
     }
 
-    // Run the lerp loop continuously (for the float + base tilt)
-    startLoop()
     scene.addEventListener("mousemove", onMove)
     scene.addEventListener("mouseleave", onLeave)
-
     return () => {
       scene.removeEventListener("mousemove", onMove)
       scene.removeEventListener("mouseleave", onLeave)
@@ -96,51 +110,50 @@ export default function ProfileCard3D() {
   }, [])
 
   return (
-    <div className="pc3-scene" ref={sceneRef} aria-hidden="true">
+    <div className="pc3-scene" ref={sceneRef}>
 
-      {/* ── Ambient glow blob behind everything ── */}
+      {/* Ambient glow blob */}
       <div className="pc3-glow-blob" />
 
-      {/* ── Background shadow-card 1 (furthest back, bigger offset) ── */}
-      <div className="pc3-bg-card pc3-bg-card-1" />
+      {/* Shadow cards — behind main card, independently animated */}
+      <div className="pc3-bg-card pc3-bg-1" />
+      <div className="pc3-bg-card pc3-bg-2" />
 
-      {/* ── Background shadow-card 2 (middle) ── */}
-      <div className="pc3-bg-card pc3-bg-card-2" />
+      {/* Float wrapper — only CSS translateY, no transform conflict */}
+      <div className="pc3-float-wrap">
 
-      {/* ── MAIN CARD ── */}
-      <div className="pc3-card" ref={cardRef}>
+        {/* Main card — only JS 3D tilt written here */}
+        <div className="pc3-card" ref={cardRef}>
 
-        {/* Photo */}
-        <Image
-          src={MAIN_PHOTO}
-          alt="Hariprashath B"
-          fill
-          className="object-cover object-top"
-          priority
-        />
+          {/* Photo */}
+          <Image
+            src={PHOTO}
+            alt="Hariprashath B"
+            fill
+            className="object-cover object-top"
+            priority
+          />
 
-        {/* Glass gradient overlay */}
-        <div className="pc3-overlay" />
+          {/* Glass gradient */}
+          <div className="pc3-overlay" />
 
-        {/* Mouse glare */}
-        <div className="pc3-glare" ref={glareRef} />
+          {/* Mouse glare */}
+          <div className="pc3-glare" ref={glareRef} />
 
-        {/* HUD corner brackets */}
-        <span className="pc3-corner pc3-tl" />
-        <span className="pc3-corner pc3-tr" />
-        <span className="pc3-corner pc3-bl" />
-        <span className="pc3-corner pc3-br" />
+          {/* HUD corner brackets */}
+          <span className="pc3-c pc3-tl" />
+          <span className="pc3-c pc3-tr" />
+          <span className="pc3-c pc3-bl" />
+          <span className="pc3-c pc3-br" />
 
-        {/* Status chip */}
-        <div className="pc3-chip">
-          <span className="pc3-dot hud-dot-pulse" />
-          <span className="pc3-chip-label">OPEN TO OPPORTUNITIES</span>
-          <span className="pc3-chip-year">{new Date().getFullYear()}</span>
+          {/* Status chip */}
+          <div className="pc3-chip">
+            <span className="pc3-dot hud-dot-pulse" />
+            <span className="pc3-chip-label">OPEN TO OPPORTUNITIES</span>
+            <span className="pc3-chip-year">{new Date().getFullYear()}</span>
+          </div>
+
         </div>
-
-        {/* Profile label top */}
-        <div className="pc3-top-label">// PROFILE</div>
-
       </div>
     </div>
   )
