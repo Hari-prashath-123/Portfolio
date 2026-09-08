@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef, useState, useEffect } from "react"
-import { motion, useScroll, useMotionValueEvent } from "framer-motion"
+import { motion, useScroll, useMotionValueEvent, useTransform } from "framer-motion"
 import Image from "next/image"
 
 // All 7 photos for the 360° scroll-driven turn — safe ASCII filenames
@@ -33,9 +33,51 @@ const HEADLINES = [
   },
 ]
 
+// Extracts the smooth crossfade logic for a single photo based on scroll position
+function HeroImage({
+  src,
+  index,
+  total,
+  scrollYProgress,
+}: {
+  src: string
+  index: number
+  total: number
+  scrollYProgress: any
+}) {
+  const step = 1 / (total - 1)
+  const center = index * step
+
+  let input, output
+  if (index === 0) {
+    input = [0, step]
+    output = [1, 0]
+  } else if (index === total - 1) {
+    input = [center - step, center]
+    output = [0, 1]
+  } else {
+    input = [center - step, center, center + step]
+    output = [0, 1, 0]
+  }
+
+  // Smoothly interpolate opacity directly linked to the scroll wheel
+  const opacity = useTransform(scrollYProgress, input, output)
+
+  return (
+    <motion.div style={{ position: "absolute", inset: 0, opacity }}>
+      <Image
+        src={src}
+        alt={`Hariprashath view ${index}`}
+        fill
+        className="object-cover object-center"
+        priority // ALL hero images must have priority to prevent flashing on fast scroll
+      />
+    </motion.div>
+  )
+}
+
 export default function HudHero() {
   const heroRef = useRef<HTMLDivElement>(null)
-  const [activePhoto, setActivePhoto] = useState(0)
   const [activeHeadline, setActiveHeadline] = useState(0)
   const [headlineKey, setHeadlineKey] = useState(0)
   const [scrollStarted, setScrollStarted] = useState(false)
@@ -54,10 +96,6 @@ export default function HudHero() {
     if (prefersReduced.current) return
     setScrollStarted(v > 0.02)
 
-    // Map to photo index 0–6
-    const photoIdx = Math.min(Math.floor(v * PHOTOS.length), PHOTOS.length - 1)
-    setActivePhoto(photoIdx)
-
     // Headline swap at 1/3 and 2/3
     const newHL = v < 0.33 ? 0 : v < 0.66 ? 1 : 2
     if (newHL !== activeHeadline) {
@@ -72,51 +110,60 @@ export default function HudHero() {
     <section
       id="home"
       ref={heroRef}
-      style={{ position: "relative", height: "200vh", background: "var(--hud-bg)" }}
+      style={{ position: "relative", height: "300vh", background: "var(--hud-bg)" }} // Increased height for slower/smoother scrubbing
     >
       {/* ── STICKY VIEWPORT ── */}
       <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
-
         {/* ── FULL-BLEED PHOTO BACKGROUND ── */}
         <div style={{ position: "absolute", inset: 0 }}>
           {PHOTOS.map((src, i) => (
-            <motion.div
+            <HeroImage
               key={src}
-              animate={{ opacity: i === activePhoto ? 1 : 0 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              style={{ position: "absolute", inset: 0 }}
-            >
-              <Image
-                src={src}
-                alt={`Hariprashath view ${i}`}
-                fill
-                className="object-cover object-center"
-                priority={i === 0}
-                loading={i === 0 ? "eager" : "lazy"}
-              />
-            </motion.div>
+              src={src}
+              index={i}
+              total={PHOTOS.length}
+              scrollYProgress={scrollYProgress}
+            />
           ))}
 
           {/* Left vignette — where text lives */}
-          <div style={{
-            position: "absolute", inset: 0,
-            background: "linear-gradient(to right, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.7) 38%, rgba(10,10,10,0.15) 60%, rgba(10,10,10,0.5) 100%)",
-          }} />
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background:
+                "linear-gradient(to right, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.7) 38%, rgba(10,10,10,0.15) 60%, rgba(10,10,10,0.5) 100%)",
+            }}
+          />
           {/* Bottom vignette */}
-          <div style={{
-            position: "absolute", inset: 0,
-            background: "linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 40%)",
-          }} />
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 40%)",
+            }}
+          />
           {/* Top vignette for navbar */}
-          <div style={{
-            position: "absolute", inset: 0,
-            background: "linear-gradient(to bottom, rgba(10,10,10,0.6) 0%, transparent 20%)",
-          }} />
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "linear-gradient(to bottom, rgba(10,10,10,0.6) 0%, transparent 20%)",
+            }}
+          />
         </div>
 
         {/* ── CONTENT LAYER ── */}
-        <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "0 3rem 4rem" }}>
-
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "flex-end",
+            padding: "0 3rem 4rem",
+          }}
+        >
           {/* SCROLL hint — top-left */}
           <motion.div
             animate={{ opacity: scrollStarted ? 0 : 0.6 }}
@@ -135,20 +182,33 @@ export default function HudHero() {
           </motion.div>
 
           {/* BOTTOM LAYOUT — two columns */}
-          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "2rem" }}>
-
+          <div
+            style={{
+              display: "flex",
+              alignItems: "flex-end",
+              justifyContent: "space-between",
+              gap: "2rem",
+            }}
+          >
             {/* LEFT — headline */}
             <div style={{ flex: "0 0 auto", maxWidth: "520px" }}>
               {/* Small label */}
-              <div style={{
-                fontFamily: "var(--hud-font-mono)",
-                fontSize: "0.6875rem",
-                color: "var(--hud-text-secondary)",
-                letterSpacing: "0.15em",
-                marginBottom: "0.75rem",
-              }}>
+              <div
+                style={{
+                  fontFamily: "var(--hud-font-mono)",
+                  fontSize: "0.6875rem",
+                  color: "var(--hud-text-secondary)",
+                  letterSpacing: "0.15em",
+                  marginBottom: "0.75rem",
+                }}
+              >
                 HI, I&apos;M{" "}
-                <span style={{ borderBottom: "1px solid var(--hud-text-secondary)", paddingBottom: "1px" }}>
+                <span
+                  style={{
+                    borderBottom: "1px solid var(--hud-text-secondary)",
+                    paddingBottom: "1px",
+                  }}
+                >
                   HARIPRASHATH
                 </span>
               </div>
@@ -179,38 +239,53 @@ export default function HudHero() {
             </div>
 
             {/* RIGHT — tag + subtext + buttons */}
-            <div style={{ flex: "0 0 auto", maxWidth: "300px", textAlign: "right", paddingBottom: "0.25rem" }}>
+            <div
+              style={{
+                flex: "0 0 auto",
+                maxWidth: "300px",
+                textAlign: "right",
+                paddingBottom: "0.25rem",
+              }}
+            >
               <motion.div
                 key={`tag-${headlineKey}`}
                 initial={{ opacity: 0, x: 16 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: 0.1 }}
               >
-                <div style={{
-                  fontFamily: "var(--hud-font-mono)",
-                  fontSize: "0.5625rem",
-                  color: "var(--hud-text-tertiary)",
-                  letterSpacing: "0.18em",
-                  marginBottom: "0.5rem",
-                  fontStyle: "italic",
-                }}>
+                <div
+                  style={{
+                    fontFamily: "var(--hud-font-mono)",
+                    fontSize: "0.5625rem",
+                    color: "var(--hud-text-tertiary)",
+                    letterSpacing: "0.18em",
+                    marginBottom: "0.5rem",
+                    fontStyle: "italic",
+                  }}
+                >
                   {hl.tag}
                 </div>
-                <p style={{
-                  fontFamily: "var(--hud-font-body)",
-                  fontSize: "0.8125rem",
-                  color: "var(--hud-text-secondary)",
-                  lineHeight: 1.65,
-                  margin: "0 0 1.5rem",
-                }}>
+                <p
+                  style={{
+                    fontFamily: "var(--hud-font-body)",
+                    fontSize: "0.8125rem",
+                    color: "var(--hud-text-secondary)",
+                    lineHeight: 1.65,
+                    margin: "0 0 1.5rem",
+                  }}
+                >
                   {hl.sub}
                 </p>
               </motion.div>
 
               {/* Buttons */}
               <div style={{ display: "flex", gap: "0.75rem", justifyContent: "flex-end" }}>
-                <a href="#projects" className="hud-btn-filled">View My Work</a>
-                <a href="#contact" className="hud-btn-outlined">Contact Me</a>
+                <a href="#projects" className="hud-btn-filled">
+                  View My Work
+                </a>
+                <a href="#contact" className="hud-btn-outlined">
+                  Contact Me
+                </a>
               </div>
             </div>
           </div>
@@ -235,7 +310,8 @@ export default function HudHero() {
                   width: i === activeHeadline ? "32px" : "16px",
                   height: "2px",
                   borderRadius: "2px",
-                  background: i === activeHeadline ? "var(--hud-text-primary)" : "rgba(245,245,245,0.2)",
+                  background:
+                    i === activeHeadline ? "var(--hud-text-primary)" : "rgba(245,245,245,0.2)",
                   transition: "all 300ms ease",
                 }}
               />
@@ -267,18 +343,39 @@ export default function HudHero() {
             padding: "2rem 1.5rem 3rem",
           }}
         >
-          <div style={{ fontFamily: "var(--hud-font-mono)", fontSize: "0.625rem", color: "var(--hud-text-secondary)", letterSpacing: "0.15em", marginBottom: "0.5rem" }}>
+          <div
+            style={{
+              fontFamily: "var(--hud-font-mono)",
+              fontSize: "0.625rem",
+              color: "var(--hud-text-secondary)",
+              letterSpacing: "0.15em",
+              marginBottom: "0.5rem",
+            }}
+          >
             HI, I&apos;M HARIPRASHATH
           </div>
-          <h1 style={{ fontFamily: "var(--hud-font-display)", fontSize: "3.5rem", lineHeight: 0.9, color: "var(--hud-text-primary)", margin: "0 0 1.5rem" }}>
-            CREATIVE<br />DEVELOPER
+          <h1
+            style={{
+              fontFamily: "var(--hud-font-display)",
+              fontSize: "3.5rem",
+              lineHeight: 0.9,
+              color: "var(--hud-text-primary)",
+              margin: "0 0 1.5rem",
+            }}
+          >
+            CREATIVE
+            <br />
+            DEVELOPER
           </h1>
           <div style={{ display: "flex", gap: "0.75rem" }}>
-            <a href="#projects" className="hud-btn-filled">View My Work</a>
-            <a href="#contact" className="hud-btn-outlined">Contact Me</a>
+            <a href="#projects" className="hud-btn-filled">
+              View My Work
+            </a>
+            <a href="#contact" className="hud-btn-outlined">
+              Contact Me
+            </a>
           </div>
         </div>
-
       </div>
     </section>
   )

@@ -39,14 +39,47 @@ export default function HudRoadMap() {
       id="roadmap"
       style={{ background: "var(--hud-bg)", padding: "7rem 2rem", borderTop: "1px solid var(--hud-border)" }}
     >
-      <div style={{ maxWidth: "1280px", margin: "0 auto" }}>
+      <div style={{ maxWidth: "1280px", margin: "0 auto", position: "relative" }}>
+        
+        {/* Glowing Background Matter */}
+        <div style={{ position: "absolute", inset: "-100px", overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+            style={{
+              position: "absolute",
+              top: "20%",
+              left: "10%",
+              width: "600px",
+              height: "600px",
+              background: "radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 60%)",
+              filter: "blur(40px)",
+              borderRadius: "50%",
+            }}
+          />
+          <motion.div
+            animate={{ rotate: -360 }}
+            transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
+            style={{
+              position: "absolute",
+              bottom: "10%",
+              right: "5%",
+              width: "800px",
+              height: "800px",
+              background: "radial-gradient(circle, rgba(255,255,255,0.02) 0%, transparent 60%)",
+              filter: "blur(60px)",
+              borderRadius: "50%",
+            }}
+          />
+        </div>
+
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
-          style={{ marginBottom: "3.5rem" }}
+          style={{ marginBottom: "3.5rem", position: "relative", zIndex: 1 }}
         >
           <span className="hud-eyebrow" style={{ marginBottom: "1rem", display: "inline-flex" }}>// ENGINEERING ROADMAP</span>
           <h2 style={{ fontFamily: "var(--hud-font-body)", fontWeight: 700, fontSize: "clamp(1.75rem, 3vw, 2.5rem)", color: "var(--hud-text-primary)", margin: "1rem 0 0" }}>
@@ -60,6 +93,8 @@ export default function HudRoadMap() {
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
             gap: "1.25rem",
+            position: "relative",
+            zIndex: 1,
           }}
         >
           {ROADMAP.map((item, i) => (
