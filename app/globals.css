@@ -757,25 +757,6 @@ html {
   .pc3-bg-2 {
     transform: perspective(1000px) rotateX(4deg)  rotateY(-15deg) translateX(-16px) scale(1.04) !important;
   }
-  .pc3-card {
-    transform: perspective(1000px) rotateX(5deg) rotateY(-12deg) !important;
-  }
-}
-
-/* ── Responsive ── */
-@media (max-width: 1024px) {
-  .pc3-scene { width: 220px; height: 293px; }
-}
-@media (max-width: 767px) {
-  .pc3-scene  { width: 200px; height: 266px; margin: 0 auto; }
-  .pc3-bg-1   { animation-duration: 18s; }
-  .pc3-bg-2   { animation-duration: 13s; }
-}
-
-/* ============================================================
-   HUD GLASS CARD SYSTEM
-   .hud-glass-card — apply to any section card to get
-   the premium 3D tilt-on-hover glass style matching the
    reference image aesthetic.
 
    Features:
@@ -910,4 +891,21 @@ html {
   .hud-glass-card .hgc-corner {
     animation: none !important;
   }
+}
+
+/* ── .pc3-tilted — permanent base tilt applied via CSS class ── */
+.pc3-card.pc3-tilted {
+  transform: perspective(1000px) rotateX(5deg) rotateY(-12deg);
+}
+/* JS mouse-follow overrides with inline style; on leave it clears inline
+   so this CSS rule resumes automatically. */
+
+/* ── Responsive for pc3 ── */
+@media (max-width: 1024px) {
+  .pc3-scene { width: 220px; height: 293px; }
+}
+@media (max-width: 767px) {
+  .pc3-scene { width: 200px; height: 266px; margin: 0 auto; }
+  .pc3-bg-1  { animation-duration: 18s; }
+  .pc3-bg-2  { animation-duration: 13s; }
 }

@@ -60,7 +60,7 @@ export default function HudProjects() {
       style={{ background: "var(--hud-bg)", padding: "7rem 2rem", borderTop: "1px solid var(--hud-border)" }}
     >
       <div style={{ maxWidth: "1280px", margin: "0 auto", position: "relative" }}>
-        
+
         {/* Glowing Background Matter */}
         <div style={{ position: "absolute", inset: "-100px", overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
           <motion.div
@@ -68,10 +68,8 @@ export default function HudProjects() {
             transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
             style={{
               position: "absolute",
-              top: "10%",
-              right: "10%",
-              width: "700px",
-              height: "700px",
+              top: "10%", right: "10%",
+              width: "700px", height: "700px",
               background: "radial-gradient(circle, rgba(255,255,255,0.02) 0%, transparent 60%)",
               filter: "blur(50px)",
               borderRadius: "50%",
@@ -82,10 +80,8 @@ export default function HudProjects() {
             transition={{ duration: 55, repeat: Infinity, ease: "linear" }}
             style={{
               position: "absolute",
-              bottom: "10%",
-              left: "5%",
-              width: "600px",
-              height: "600px",
+              bottom: "10%", left: "5%",
+              width: "600px", height: "600px",
               background: "radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 60%)",
               filter: "blur(40px)",
               borderRadius: "50%",
@@ -124,35 +120,26 @@ export default function HudProjects() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.5, delay: (i % 3) * 0.1 }}
-              className="hud-card-hover"
+              className="hud-glass-card"
               style={{
-                background: "var(--hud-elevated)",
-                border: "1px solid var(--hud-border)",
-                borderRadius: "16px",
                 padding: "1.75rem",
                 display: "flex",
                 flexDirection: "column",
                 gap: "1rem",
               }}
             >
+              {/* HUD corner brackets */}
+              <span className="hgc-corner tl" />
+              <span className="hgc-corner tr" />
+              <span className="hgc-corner bl" />
+              <span className="hgc-corner br" />
+
               {/* Top row */}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <span style={{ fontFamily: "var(--hud-font-mono)", fontSize: "0.5625rem", color: "var(--hud-text-tertiary)", letterSpacing: "0.12em" }}>
                   // PROJECT {project.num}
                 </span>
-                <span
-                  style={{
-                    padding: "0.2rem 0.6rem",
-                    borderRadius: "999px",
-                    border: "1px solid var(--hud-border)",
-                    fontFamily: "var(--hud-font-mono)",
-                    fontSize: "0.5625rem",
-                    color: "var(--hud-accent-green)",
-                    letterSpacing: "0.1em",
-                  }}
-                >
-                  {project.category}
-                </span>
+                <span className="hgc-badge">{project.category}</span>
               </div>
 
               <h3 style={{ fontFamily: "var(--hud-font-body)", fontWeight: 700, fontSize: "1rem", color: "var(--hud-text-primary)", lineHeight: 1.35, margin: 0 }}>

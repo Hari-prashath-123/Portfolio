@@ -40,7 +40,7 @@ export default function HudRoadMap() {
       style={{ background: "var(--hud-bg)", padding: "7rem 2rem", borderTop: "1px solid var(--hud-border)" }}
     >
       <div style={{ maxWidth: "1280px", margin: "0 auto", position: "relative" }}>
-        
+
         {/* Glowing Background Matter */}
         <div style={{ position: "absolute", inset: "-100px", overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
           <motion.div
@@ -48,10 +48,8 @@ export default function HudRoadMap() {
             transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
             style={{
               position: "absolute",
-              top: "20%",
-              left: "10%",
-              width: "600px",
-              height: "600px",
+              top: "20%", left: "10%",
+              width: "600px", height: "600px",
               background: "radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 60%)",
               filter: "blur(40px)",
               borderRadius: "50%",
@@ -62,10 +60,8 @@ export default function HudRoadMap() {
             transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
             style={{
               position: "absolute",
-              bottom: "10%",
-              right: "5%",
-              width: "800px",
-              height: "800px",
+              bottom: "10%", right: "5%",
+              width: "800px", height: "800px",
               background: "radial-gradient(circle, rgba(255,255,255,0.02) 0%, transparent 60%)",
               filter: "blur(60px)",
               borderRadius: "50%",
@@ -144,53 +140,6 @@ export default function HudRoadMap() {
                 {item.desc}
               </p>
               <span className="hgc-badge">{item.badge}</span>
-            </motion.div>
-          ))}
-
-              {/* Number dot */}
-              <div
-                style={{
-                  position: "absolute",
-                  top: "1.25rem",
-                  right: "1.25rem",
-                  width: "28px",
-                  height: "28px",
-                  borderRadius: "50%",
-                  border: "1px solid var(--hud-border)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontFamily: "var(--hud-font-mono)",
-                  fontSize: "0.625rem",
-                  color: "var(--hud-text-tertiary)",
-                }}
-              >
-                {item.num}
-              </div>
-
-              <div style={{ fontFamily: "var(--hud-font-mono)", fontSize: "0.625rem", color: "var(--hud-accent-green)", letterSpacing: "0.1em", marginBottom: "0.75rem" }}>
-                {item.tag}
-              </div>
-              <h3 style={{ fontFamily: "var(--hud-font-body)", fontWeight: 700, fontSize: "1.0625rem", color: "var(--hud-text-primary)", marginBottom: "0.75rem" }}>
-                {item.title}
-              </h3>
-              <p style={{ fontFamily: "var(--hud-font-body)", fontSize: "0.875rem", color: "var(--hud-text-secondary)", lineHeight: 1.65, marginBottom: "1.25rem" }}>
-                {item.desc}
-              </p>
-              <span
-                style={{
-                  display: "inline-flex",
-                  padding: "0.25rem 0.75rem",
-                  borderRadius: "999px",
-                  border: "1px solid var(--hud-border)",
-                  fontFamily: "var(--hud-font-mono)",
-                  fontSize: "0.625rem",
-                  color: "var(--hud-text-tertiary)",
-                  letterSpacing: "0.08em",
-                }}
-              >
-                {item.badge}
-              </span>
             </motion.div>
           ))}
         </div>
