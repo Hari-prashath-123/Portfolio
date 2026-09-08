@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import type { PortfolioData, Project } from "@/lib/portfolio-data"
 
-type Tab = "hero" | "about" | "projects" | "contact"
+type Tab = "hero" | "about" | "projects" | "contact" | "media"
 
 function TagInput({ tags, onChange }: { tags: string[]; onChange: (tags: string[]) => void }) {
   const [input, setInput] = useState("")
@@ -53,6 +53,119 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 const inputCls = "w-full px-3 py-2.5 rounded-lg bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all text-sm"
 const textareaCls = inputCls + " resize-none"
+
+type UploadType = "profile" | "logo" | "resume"
+
+function FileUploader({
+  type,
+  label,
+  accept,
+  hint,
+  previewUrl,
+}: {
+  type: UploadType
+  label: string
+  accept: string
+  hint: string
+  previewUrl?: string
+}) {
+  const [uploading, setUploading] = useState(false)
+  const [uploaded, setUploaded] = useState(false)
+  const [error, setError] = useState("")
+  const [preview, setPreview] = useState(previewUrl || "")
+  const [dragOver, setDragOver] = useState(false)
+
+  const upload = async (file: File) => {
+    setUploading(true)
+    setError("")
+    setUploaded(false)
+    try {
+      const formData = new FormData()
+      formData.append("file", file)
+      formData.append("type", type)
+      const res = await fetch("/api/admin/upload", { method: "POST", body: formData })
+      const data = await res.json()
+      if (res.ok) {
+        setUploaded(true)
+        if (type !== "resume") {
+          setPreview(data.url + "?t=" + Date.now())
+        } else {
+          setPreview(data.url)
+        }
+        setTimeout(() => setUploaded(false), 4000)
+      } else {
+        setError(data.error || "Upload failed")
+      }
+    } catch {
+      setError("Network error during upload")
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const handleFile = (file: File | null) => {
+    if (!file) return
+    upload(file)
+  }
+
+  return (
+    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="font-semibold text-white">{label}</h3>
+          <p className="text-xs text-slate-500 mt-0.5">{hint}</p>
+        </div>
+        {uploaded && (
+          <span className="text-green-400 text-sm flex items-center gap-1.5 animate-in fade-in">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+            Uploaded!
+          </span>
+        )}
+      </div>
+
+      {/* Current file preview */}
+      {preview && type !== "resume" && (
+        <div className="relative w-24 h-24 rounded-xl overflow-hidden border border-slate-700">
+          <img src={preview} alt="Current" className="w-full h-full object-cover" />
+        </div>
+      )}
+      {preview && type === "resume" && (
+        <a href={preview} target="_blank" className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 text-blue-400 text-sm hover:text-blue-300 transition-colors border border-slate-700">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+          View current resume
+        </a>
+      )}
+
+      {/* Drop zone */}
+      <label
+        className={`flex flex-col items-center justify-center w-full h-36 rounded-xl border-2 border-dashed cursor-pointer transition-all duration-200 ${
+          dragOver
+            ? "border-blue-500 bg-blue-500/10"
+            : "border-slate-700 bg-slate-800/50 hover:border-slate-500 hover:bg-slate-800"
+        }`}
+        onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={(e) => { e.preventDefault(); setDragOver(false); handleFile(e.dataTransfer.files[0]) }}
+      >
+        <input type="file" accept={accept} className="hidden" onChange={(e) => handleFile(e.target.files?.[0] || null)} />
+        {uploading ? (
+          <div className="flex flex-col items-center gap-2 text-blue-400">
+            <svg className="animate-spin w-8 h-8" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" /></svg>
+            <span className="text-sm">Uploading...</span>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center gap-2 text-slate-400">
+            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+            <span className="text-sm font-medium">Drop file here or click to browse</span>
+            <span className="text-xs text-slate-600">{hint}</span>
+          </div>
+        )}
+      </label>
+
+      {error && <p className="text-red-400 text-sm flex items-center gap-2"><svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>{error}</p>}
+    </div>
+  )
+}
 
 export default function AdminPage() {
   const router = useRouter()
@@ -181,6 +294,7 @@ export default function AdminPage() {
     { id: "about", label: "About", icon: "👤" },
     { id: "projects", label: "Projects", icon: "🚀" },
     { id: "contact", label: "Contact", icon: "📬" },
+    { id: "media", label: "Media", icon: "🖼️" },
   ]
 
   return (
@@ -449,6 +563,36 @@ export default function AdminPage() {
                 <Field label="Fun Fact">
                   <textarea className={textareaCls} rows={4} value={data.contact.funFact} onChange={(e) => updateContact("funFact", e.target.value)} />
                 </Field>
+              </div>
+            </section>
+          )}
+
+          {/* MEDIA TAB */}
+          {tab === "media" && (
+            <section className="space-y-6">
+              <h2 className="text-xl font-bold">Media Management</h2>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <FileUploader
+                  type="profile"
+                  label="Profile Picture"
+                  accept="image/jpeg,image/png,image/webp"
+                  hint="Used in the Hero section (1:1 ratio recommended)"
+                  previewUrl="/Profile.jpeg"
+                />
+                <FileUploader
+                  type="logo"
+                  label="Site Logo"
+                  accept="image/jpeg,image/png,image/webp,image/svg+xml,image/x-icon"
+                  hint="Used as favicon and in header (small square)"
+                  previewUrl="/logo.jpg"
+                />
+                <FileUploader
+                  type="resume"
+                  label="Resume PDF"
+                  accept="application/pdf"
+                  hint="Linked in the header and about section"
+                  previewUrl="/resume.pdf"
+                />
               </div>
             </section>
           )}

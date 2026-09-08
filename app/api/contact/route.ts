@@ -2,21 +2,30 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { Resend } from "resend"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 export async function POST(request: NextRequest) {
   try {
+    const apiKey = process.env.RESEND_API_KEY
+    if (!apiKey || apiKey === "re_your_api_key_here") {
+      console.error("RESEND_API_KEY is not configured")
+      return NextResponse.json(
+        { error: "Email service not configured. Please add RESEND_API_KEY to environment variables." },
+        { status: 503 }
+      )
+    }
+
     const { name, email, message } = await request.json()
 
     if (!name || !email || !message) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 })
     }
 
-    const { error } = await resend.emails.send({
+    const resend = new Resend(apiKey)
+
+    const { data, error } = await resend.emails.send({
       from: "Portfolio Contact <onboarding@resend.dev>",
       to: ["hariprashath321@gmail.com"],
       subject: `New Contact Form Message from ${name}`,
-      replyTo: email,
+      reply_to: email,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #0f172a; color: #e2e8f0; border-radius: 12px;">
           <h2 style="color: #60a5fa; margin-bottom: 24px; font-size: 24px;">📬 New Message from Your Portfolio</h2>
@@ -44,10 +53,11 @@ export async function POST(request: NextRequest) {
     })
 
     if (error) {
-      console.error("Resend error:", error)
-      return NextResponse.json({ error: "Failed to send email" }, { status: 500 })
+      console.error("Resend API error:", JSON.stringify(error))
+      return NextResponse.json({ error: `Failed to send email: ${error.message}` }, { status: 500 })
     }
 
+    console.log("Email sent successfully, id:", data?.id)
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error("Contact route error:", err)
