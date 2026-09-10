@@ -12,11 +12,15 @@ const badgeVariants = cva(
         default:
           'border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90',
         secondary:
-          'border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90',
+          'border-transparent bg-secondary/80 backdrop-blur-md text-secondary-foreground [a&]:hover:bg-secondary/90 border-white/10',
         destructive:
           'border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
         outline:
-          'text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground',
+          'text-foreground border-white/15 backdrop-blur-sm [a&]:hover:bg-accent [a&]:hover:text-accent-foreground',
+        glass:
+          'glass-pill text-foreground/90 border-white/15 hover:border-white/30',
+        'glass-primary':
+          'bg-primary/20 backdrop-blur-md text-primary border-primary/30 hover:border-primary/50 hover:bg-primary/30',
       },
     },
     defaultVariants: {

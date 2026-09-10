@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 
 import { ThemeProvider } from "@/components/theme-provider"
+import WaterBackground from "@/components/water-background"
 import "./globals.css"
 
 const _geist = Geist({ subsets: ["latin"] })
@@ -30,8 +31,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="dark">
-      <body className={`font-sans antialiased`}>
-        <ThemeProvider>{children}</ThemeProvider>
+      <body className={`font-sans antialiased relative min-h-screen`}>
+        <ThemeProvider>
+          <WaterBackground />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   )

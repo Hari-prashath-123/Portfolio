@@ -38,9 +38,9 @@ export default function ResumePage() {
               <div className="flex justify-center">
                 <button
                   onClick={handleDownload}
-                  className="flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 font-medium text-lg hover:scale-105 hover:shadow-lg"
+                  className="water-glass-btn flex items-center gap-3 px-8 py-4 rounded-2xl text-white font-bold text-base hover:scale-105 shadow-2xl"
                 >
-                  <Download className="w-5 h-5" />
+                  <Download className="w-5 h-5 text-white" />
                   Download Resume (PDF)
                 </button>
               </div>
@@ -48,36 +48,45 @@ export default function ResumePage() {
 
             {/* Resume Preview */}
             <AnimateOnScroll animation="fade-up" delay={200}>
-              <div className="bg-card border border-border rounded-xl p-8 space-y-8">
+              <div className="water-glass-card p-8 sm:p-10 rounded-3xl space-y-8 shadow-2xl">
                 {/* Career Objective */}
-                <section>
-                  <h2 className="text-2xl font-bold mb-4">Career Objective</h2>
-                  <p className="text-muted-foreground leading-relaxed">
+                <section className="water-glass-panel p-6 rounded-2xl">
+                  <h2 className="text-xl sm:text-2xl font-bold mb-3 text-foreground flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-white" />
+                    Career Objective
+                  </h2>
+                  <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
                     Final-year B.Tech student specializing in Artificial Intelligence & Data Science with hands-on experience in developing AI-powered web applications, automation systems, and intelligent full-stack platforms. Skilled in React, Python, Flask, Django, Node.js, TensorFlow, and Generative AI technologies. Passionate about building scalable AI systems, autonomous agents, and production-ready software solutions.
                   </p>
                 </section>
 
                 {/* Education */}
-                <section>
-                  <h2 className="text-2xl font-bold mb-4">Education</h2>
-                  <div className="space-y-4">
+                <section className="water-glass-panel p-6 rounded-2xl">
+                  <h2 className="text-xl sm:text-2xl font-bold mb-3 text-foreground flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-primary" />
+                    Education
+                  </h2>
+                  <div className="space-y-3">
                     <div>
-                      <h3 className="text-xl font-semibold">B.Tech in AI & Data Science</h3>
-                      <p className="text-muted-foreground">K. Ramakrishnan College of Technology (KRCT), Trichy</p>
-                      <p className="text-sm text-muted-foreground">Anna University • Graduating 2027 • CGPA: 7.89 (till 5th Semester)</p>
+                      <h3 className="text-lg font-bold text-foreground">B.Tech in AI & Data Science</h3>
+                      <p className="text-muted-foreground text-sm">K. Ramakrishnan College of Technology (KRCT), Trichy</p>
+                      <p className="text-xs text-primary font-semibold mt-1">Anna University • Graduating 2027 • CGPA: 7.89 (till 5th Semester)</p>
                     </div>
                   </div>
                 </section>
 
                 {/* Experience */}
-                <section>
-                  <h2 className="text-2xl font-bold mb-4">Experience</h2>
-                  <div className="space-y-4">
+                <section className="water-glass-panel p-6 rounded-2xl">
+                  <h2 className="text-xl sm:text-2xl font-bold mb-3 text-foreground flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-white" />
+                    Experience
+                  </h2>
+                  <div className="space-y-3">
                     <div>
-                      <h3 className="text-xl font-semibold">AI & Cloud Computing Intern</h3>
-                      <p className="text-muted-foreground">CloudplusAI Tech</p>
-                      <p className="text-sm text-muted-foreground">Apr 2025 – Jun 2025</p>
-                      <p className="text-sm text-muted-foreground mt-2">
+                      <h3 className="text-lg font-bold text-foreground">AI & Cloud Computing Intern</h3>
+                      <p className="text-muted-foreground text-sm">CloudplusAI Tech</p>
+                      <p className="text-xs text-primary font-semibold mt-1">Apr 2025 – Jun 2025</p>
+                      <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
                         Worked on AI-integrated cloud solutions and deployment workflows.
                       </p>
                     </div>
@@ -85,9 +94,12 @@ export default function ResumePage() {
                 </section>
 
                 {/* Certifications */}
-                <section>
-                  <h2 className="text-2xl font-bold mb-4">Certifications</h2>
-                  <ul className="space-y-3">
+                <section className="water-glass-panel p-6 rounded-2xl">
+                  <h2 className="text-xl sm:text-2xl font-bold mb-3 text-foreground flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-accent" />
+                    Certifications
+                  </h2>
+                  <ul className="space-y-2.5">
                     {[
                       "PL-300: Microsoft Power BI Data Analyst Associate – Microsoft (May 2025)",
                       "Generative AI, Prompt Engineering & ChatGPT – Simplilearn (May 2025)",
@@ -98,8 +110,8 @@ export default function ResumePage() {
                       "Data Science with Python & Tableau Desktop Specialist – Simplilearn",
                       "HDCA (C, C++, Python) – Apollo Institute",
                     ].map((cert, i) => (
-                      <li key={i} className="flex items-start gap-3">
-                        <span className="flex-shrink-0 w-2 h-2 rounded-full bg-primary mt-2" />
+                      <li key={i} className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                        <span className="text-white font-bold">✓</span>
                         <span>{cert}</span>
                       </li>
                     ))}
@@ -107,17 +119,20 @@ export default function ResumePage() {
                 </section>
 
                 {/* Leadership */}
-                <section>
-                  <h2 className="text-2xl font-bold mb-4">Leadership & Achievements</h2>
+                <section className="water-glass-panel p-6 rounded-2xl">
+                  <h2 className="text-xl sm:text-2xl font-bold mb-3 text-foreground flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-white" />
+                    Leadership & Achievements
+                  </h2>
                   <div className="space-y-4">
                     <div>
-                      <h3 className="text-xl font-semibold">President – AGEN Club</h3>
-                      <p className="text-muted-foreground">Agentic & Generative AI Club at KRCT (2025 – Present)</p>
-                      <p className="text-sm text-muted-foreground mt-2">
+                      <h3 className="text-lg font-bold text-foreground">President – AGEN Club</h3>
+                      <p className="text-muted-foreground text-sm">Agentic & Generative AI Club at KRCT (2025 – Present)</p>
+                      <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
                         Conducted webinars, workshops, AI awareness sessions. Organized "Generative AI & Data Science Webinar" with 700+ impressions.
                       </p>
                     </div>
-                    <ul className="space-y-2 text-sm text-muted-foreground">
+                    <ul className="space-y-2 text-xs sm:text-sm text-muted-foreground">
                       <li>🏆 1st Prize – Hackathon (Isysway, Tanjore)</li>
                       <li>🏅 Certificate of Excellence – HackXelerate'25, KPR Institute</li>
                       <li>⭐ Top Performer – National Workshop on Cyber Warfare & Ethical Hacking</li>
@@ -128,24 +143,27 @@ export default function ResumePage() {
                 </section>
 
                 {/* Skills */}
-                <section>
-                  <h2 className="text-2xl font-bold mb-4">Technical Skills</h2>
-                  <div className="grid sm:grid-cols-2 gap-6">
-                    <div>
-                      <h4 className="font-semibold text-foreground mb-2">Programming</h4>
-                      <p className="text-muted-foreground text-sm">Python, JavaScript, TypeScript, Java, C, SQL, HTML5, CSS3</p>
+                <section className="water-glass-panel p-6 rounded-2xl">
+                  <h2 className="text-xl sm:text-2xl font-bold mb-3 text-foreground flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-primary" />
+                    Technical Skills
+                  </h2>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="water-glass-pill p-3.5 rounded-xl border border-white/10">
+                      <h4 className="font-bold text-foreground text-xs uppercase tracking-wider mb-1">Programming</h4>
+                      <p className="text-muted-foreground text-xs">Python, JavaScript, TypeScript, Java, C, SQL, HTML5, CSS3</p>
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-foreground mb-2">AI/ML/GenAI</h4>
-                      <p className="text-muted-foreground text-sm">Machine Learning, Deep Learning, Generative AI, Prompt Engineering, Hugging Face, OpenAI APIs, Agentic AI</p>
+                    <div className="water-glass-pill p-3.5 rounded-xl border border-white/10">
+                      <h4 className="font-bold text-foreground text-xs uppercase tracking-wider mb-1">AI/ML/GenAI</h4>
+                      <p className="text-muted-foreground text-xs">Machine Learning, Deep Learning, Generative AI, Prompt Engineering, Hugging Face, OpenAI APIs, Agentic AI</p>
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-foreground mb-2">Frameworks</h4>
-                      <p className="text-muted-foreground text-sm">React.js, Node.js, Flask, Django, Express.js, TensorFlow, Scikit-Learn</p>
+                    <div className="water-glass-pill p-3.5 rounded-xl border border-white/10">
+                      <h4 className="font-bold text-foreground text-xs uppercase tracking-wider mb-1">Frameworks</h4>
+                      <p className="text-muted-foreground text-xs">React.js, Node.js, Flask, Django, Express.js, TensorFlow, Scikit-Learn</p>
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-foreground mb-2">Databases & Tools</h4>
-                      <p className="text-muted-foreground text-sm">PostgreSQL, SQLite, Supabase, Power BI, Figma, Git, GitHub</p>
+                    <div className="water-glass-pill p-3.5 rounded-xl border border-white/10">
+                      <h4 className="font-bold text-foreground text-xs uppercase tracking-wider mb-1">Databases & Tools</h4>
+                      <p className="text-muted-foreground text-xs">PostgreSQL, SQLite, Supabase, Power BI, Figma, Git, GitHub</p>
                     </div>
                   </div>
                 </section>
@@ -154,11 +172,13 @@ export default function ResumePage() {
 
             {/* CTA */}
             <AnimateOnScroll animation="fade-up" delay={300}>
-              <div className="bg-card border border-border rounded-xl p-8 text-center">
-                <h3 className="text-xl font-bold mb-3">Ready to collaborate?</h3>
-                <p className="text-muted-foreground mb-6">Let's discuss how I can contribute to your team or project</p>
+              <div className="water-glass-card p-8 rounded-3xl text-center shadow-2xl">
+                <h3 className="text-xl sm:text-2xl font-bold mb-2">Ready to collaborate?</h3>
+                <p className="text-muted-foreground text-sm mb-6">Let's discuss how I can contribute to your team or project</p>
                 <a href="/#contact">
-                  <Button size="lg">Get in Touch</Button>
+                  <Button size="lg" className="water-glass-btn rounded-xl text-xs uppercase tracking-wider text-white">
+                    Get in Touch
+                  </Button>
                 </a>
               </div>
             </AnimateOnScroll>

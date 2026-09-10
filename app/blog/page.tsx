@@ -47,29 +47,29 @@ export default function BlogPage() {
             {BLOG_POSTS.map((post) => (
               <article
                 key={post.id}
-                className="p-6 rounded-lg bg-card border border-border hover:border-primary/50 transition-all hover:shadow-lg hover:shadow-primary/10"
+                className="p-6 sm:p-7 rounded-3xl water-glass-card hover:border-cyan-400/50 transition-all hover:shadow-2xl hover:shadow-cyan-500/10 cursor-pointer"
               >
                 <Link href={`/blog/${post.id}`}>
-                  <div className="space-y-3 cursor-pointer group">
+                  <div className="space-y-3 group">
                     <div className="flex items-start justify-between gap-4">
-                      <h2 className="text-2xl font-bold group-hover:text-primary transition-colors">{post.title}</h2>
-                      <span className="text-sm text-muted-foreground whitespace-nowrap">{post.readTime}</span>
+                      <h2 className="text-xl sm:text-2xl font-bold group-hover:text-primary transition-colors">{post.title}</h2>
+                      <span className="text-xs font-semibold px-2.5 py-1 rounded-full water-glass-pill text-cyan-300 whitespace-nowrap">{post.readTime}</span>
                     </div>
 
-                    <p className="text-muted-foreground leading-relaxed">{post.excerpt}</p>
+                    <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">{post.excerpt}</p>
 
                     <div className="flex items-center justify-between pt-2">
                       <div className="flex flex-wrap gap-2">
                         {post.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="px-2 py-1 rounded-md bg-secondary text-secondary-foreground text-xs font-medium"
+                            className="px-2.5 py-1 rounded-lg water-glass-pill text-foreground/80 text-xs font-medium"
                           >
                             {tag}
                           </span>
                         ))}
                       </div>
-                      <time className="text-sm text-muted-foreground">
+                      <time className="text-xs text-muted-foreground font-medium">
                         {new Date(post.date).toLocaleDateString("en-US", {
                           year: "numeric",
                           month: "short",

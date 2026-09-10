@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
       from: "Portfolio Contact <onboarding@resend.dev>",
       to: ["hariprashath321@gmail.com"],
       subject: `New Contact Form Message from ${name}`,
-      reply_to: email,
+      replyTo: email,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #0f172a; color: #e2e8f0; border-radius: 12px;">
           <h2 style="color: #60a5fa; margin-bottom: 24px; font-size: 24px;">📬 New Message from Your Portfolio</h2>

@@ -148,22 +148,22 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     <main className="min-h-screen">
       <Header />
 
-      <article className="py-12 px-4">
+      <article className="py-12 px-4 relative z-10">
         <div className="max-w-3xl mx-auto">
           {/* Back Button */}
-          <Link href="/#projects" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 mb-8">
+          <Link href="/#projects" className="inline-flex items-center gap-2 water-glass-btn px-4 py-2 rounded-xl text-xs font-semibold text-primary mb-8 hover:text-primary">
             <ArrowLeft className="w-4 h-4" />
             Back to Projects
           </Link>
 
-          {/* Header */}
-          <div className="space-y-6 mb-12">
+          {/* Header Card */}
+          <div className="water-glass-card p-6 sm:p-8 rounded-3xl space-y-6 mb-10 shadow-2xl">
             <div>
-              <p className="text-sm text-muted-foreground mb-2">
+              <p className="text-xs font-bold uppercase tracking-widest text-primary mb-2">
                 {project.date} • {project.role}
               </p>
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">{project.title}</h1>
-              <p className="text-lg text-muted-foreground">{project.description}</p>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 tracking-tight">{project.title}</h1>
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">{project.description}</p>
             </div>
 
             {/* Tags */}
@@ -171,7 +171,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               {project.tags.map((tag: string) => (
                 <span
                   key={tag}
-                  className="px-3 py-1 rounded-full bg-secondary text-secondary-foreground text-sm font-medium"
+                  className="px-3 py-1 rounded-lg water-glass-pill text-xs font-semibold text-foreground/90 border border-white/10"
                 >
                   {tag}
                 </span>
@@ -179,19 +179,19 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap gap-3 pt-4">
+            <div className="flex flex-wrap gap-3 pt-2">
               {project.repoUrl && (
                 <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">
-                  <Button className="gap-2">
-                    <Github className="w-4 h-4" />
+                  <Button className="gap-2 water-glass-btn rounded-xl text-xs font-semibold uppercase tracking-wider text-white">
+                    <Github className="w-4 h-4 text-white" />
                     View Repository
                   </Button>
                 </a>
               )}
               {project.liveUrl && project.liveUrl !== "#" && (
                 <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                  <Button variant="outline" className="gap-2 bg-transparent">
-                    <ExternalLink className="w-4 h-4" />
+                  <Button variant="outline" className="gap-2 water-glass-btn rounded-xl text-xs font-semibold uppercase tracking-wider bg-transparent">
+                    <ExternalLink className="w-4 h-4 text-primary" />
                     Live Demo
                   </Button>
                 </a>
@@ -200,56 +200,67 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           </div>
 
           {/* Main Content */}
-          <div className="prose prose-invert max-w-none">
-            <section className="mb-12">
-              <h2 className="text-2xl font-bold mb-4">Overview</h2>
-              <p className="text-muted-foreground leading-relaxed">{project.fullDescription}</p>
+          <div className="space-y-10">
+            <section className="water-glass-panel p-6 sm:p-8 rounded-3xl">
+              <h2 className="text-xl sm:text-2xl font-bold mb-3 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-white" />
+                Overview
+              </h2>
+              <p className="text-muted-foreground leading-relaxed text-base">{project.fullDescription}</p>
             </section>
 
             {/* Tech Stack */}
-            <section className="mb-12">
-              <h2 className="text-2xl font-bold mb-4">Technology Stack</h2>
-              <div className="grid sm:grid-cols-2 gap-4">
+            <section className="water-glass-panel p-6 sm:p-8 rounded-3xl">
+              <h2 className="text-xl sm:text-2xl font-bold mb-4 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-primary" />
+                Technology Stack
+              </h2>
+              <div className="grid sm:grid-cols-2 gap-3">
                 {project.stack.map((tech: string) => (
-                  <div key={tech} className="flex items-center gap-3 p-3 rounded-lg bg-card border border-border">
-                    <div className="w-2 h-2 rounded-full bg-primary" />
-                    <span className="text-foreground font-medium">{tech}</span>
+                  <div key={tech} className="flex items-center gap-3 p-3.5 rounded-xl water-glass-card hover:border-white/40 transition-all">
+                    <div className="w-2 h-2 rounded-full bg-white" />
+                    <span className="text-foreground font-semibold text-sm">{tech}</span>
                   </div>
                 ))}
               </div>
             </section>
 
             {/* Key Achievements */}
-            <section className="mb-12">
-              <h2 className="text-2xl font-bold mb-4">Key Achievements</h2>
+            <section className="water-glass-panel p-6 sm:p-8 rounded-3xl">
+              <h2 className="text-xl sm:text-2xl font-bold mb-4 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-accent" />
+                Key Achievements
+              </h2>
               <ul className="space-y-3">
                 {project.achievements.map((achievement: string, idx: number) => (
                   <li key={idx} className="flex gap-3 items-start">
-                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-sm font-semibold">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-lg water-glass-pill flex items-center justify-center text-xs font-bold text-white">
                       ✓
                     </span>
-                    <span className="text-muted-foreground pt-1">{achievement}</span>
+                    <span className="text-muted-foreground text-sm leading-relaxed pt-0.5">{achievement}</span>
                   </li>
                 ))}
               </ul>
             </section>
 
             {/* CTA */}
-            <section className="border-t border-border pt-12">
-              <div className="bg-card border border-border rounded-xl p-8 text-center">
-                <h3 className="text-xl font-bold mb-3">Interested in this project?</h3>
-                <p className="text-muted-foreground mb-6">Check out the code on GitHub or reach out for more details</p>
+            <section className="pt-4">
+              <div className="water-glass-card p-8 rounded-3xl text-center shadow-2xl">
+                <h3 className="text-xl sm:text-2xl font-bold mb-2">Interested in this project?</h3>
+                <p className="text-muted-foreground text-sm mb-6">Check out the code on GitHub or reach out for more details</p>
                 <div className="flex flex-wrap gap-3 justify-center">
                   {project.repoUrl && (
                     <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">
-                      <Button className="gap-2">
-                        <Github className="w-4 h-4" />
+                      <Button className="gap-2 water-glass-btn rounded-xl text-xs uppercase tracking-wider text-white">
+                        <Github className="w-4 h-4 text-white" />
                         View Code
                       </Button>
                     </a>
                   )}
                   <a href="/#contact">
-                    <Button variant="outline">Get in Touch</Button>
+                    <Button variant="outline" className="water-glass-btn rounded-xl text-xs uppercase tracking-wider">
+                      Get in Touch
+                    </Button>
                   </a>
                 </div>
               </div>

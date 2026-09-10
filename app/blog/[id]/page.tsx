@@ -241,19 +241,18 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
     <main className="min-h-screen">
       <Header />
 
-      <article className="py-12 px-4 bg-background">
+      <article className="py-12 px-4 relative z-10">
         <div className="max-w-3xl mx-auto">
           {/* Back Button */}
-          <Link href="/blog" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 mb-8">
+          <Link href="/blog" className="inline-flex items-center gap-2 water-glass-btn px-4 py-2 rounded-xl text-xs font-semibold text-primary mb-8 hover:text-primary">
             <ArrowLeft className="w-4 h-4" />
             Back to Blog
           </Link>
 
-          {/* Header */}
-          <div className="space-y-4 mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold">{post.title}</h1>
-
-            <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
+          {/* Header Card */}
+          <div className="water-glass-card p-6 sm:p-8 rounded-3xl space-y-6 mb-10 shadow-2xl">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">{post.title}</h1>
+            <div className="flex items-center gap-4 text-xs font-semibold uppercase tracking-wider text-primary">
               <time>
                 {new Date(post.date).toLocaleDateString("en-US", {
                   year: "numeric",
@@ -262,14 +261,14 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
                 })}
               </time>
               <span>•</span>
-              <span>{post.readTime}</span>
+              <span className="water-glass-pill px-2.5 py-0.5 rounded-full text-cyan-300">{post.readTime}</span>
             </div>
 
-            <div className="flex flex-wrap gap-2 pt-2">
+            <div className="flex flex-wrap gap-2 pt-1">
               {post.tags.map((tag: string) => (
                 <span
                   key={tag}
-                  className="px-3 py-1 rounded-full bg-secondary text-secondary-foreground text-sm font-medium"
+                  className="px-3 py-1 rounded-lg water-glass-pill text-foreground/80 text-xs font-semibold"
                 >
                   {tag}
                 </span>
@@ -278,19 +277,20 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
           </div>
 
           {/* Content */}
-          <div className="prose prose-invert max-w-none space-y-6 text-muted-foreground">
+          <div className="water-glass-panel p-6 sm:p-10 rounded-3xl space-y-6 text-muted-foreground text-base sm:text-lg leading-relaxed shadow-xl">
             {post.content.split("\n\n").map((paragraph: string, idx: number) => {
               if (paragraph.startsWith("#")) {
                 const level = paragraph.match(/^#+/)?.[0].length || 1
                 const text = paragraph.replace(/^#+\s/, "")
                 const headingClass =
                   {
-                    1: "text-3xl font-bold text-foreground",
-                    2: "text-2xl font-bold text-foreground",
-                    3: "text-xl font-bold text-foreground",
-                  }[level] || "text-lg font-bold text-foreground"
+                    1: "text-2xl sm:text-3xl font-bold text-foreground pt-4",
+                    2: "text-xl sm:text-2xl font-bold text-foreground pt-3 flex items-center gap-2",
+                    3: "text-lg sm:text-xl font-bold text-foreground pt-2",
+                  }[level] || "text-base sm:text-lg font-bold text-foreground"
                 return (
                   <h2 key={idx} className={headingClass}>
+                    {level === 2 && <span className="w-2 h-2 rounded-full bg-cyan-400 shrink-0" />}
                     {text}
                   </h2>
                 )
@@ -298,7 +298,7 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
               if (paragraph.startsWith("-")) {
                 const items = paragraph.split("\n").filter((line) => line.startsWith("-"))
                 return (
-                  <ul key={idx} className="list-disc list-inside space-y-2">
+                  <ul key={idx} className="list-disc list-inside space-y-2.5 pl-2">
                     {items.map((item, i) => (
                       <li key={i}>{item.substring(2)}</li>
                     ))}
@@ -308,7 +308,7 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
               if (paragraph.startsWith("1.")) {
                 const items = paragraph.split("\n").filter((line) => /^\d+\./.test(line))
                 return (
-                  <ol key={idx} className="list-decimal list-inside space-y-2">
+                  <ol key={idx} className="list-decimal list-inside space-y-2.5 pl-2">
                     {items.map((item, i) => (
                       <li key={i}>{item.replace(/^\d+\.\s/, "")}</li>
                     ))}
@@ -320,12 +320,12 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
           </div>
 
           {/* CTA */}
-          <div className="mt-16 pt-8 border-t border-border">
-            <div className="bg-card border border-border rounded-xl p-8 text-center">
-              <h3 className="text-xl font-bold mb-3">Enjoyed this article?</h3>
-              <p className="text-muted-foreground mb-6">Share your thoughts or let's discuss these ideas further</p>
+          <div className="mt-12">
+            <div className="water-glass-card p-8 rounded-3xl text-center shadow-2xl">
+              <h3 className="text-xl sm:text-2xl font-bold mb-2">Enjoyed this article?</h3>
+              <p className="text-muted-foreground text-sm mb-6">Share your thoughts or let's discuss these ideas further</p>
               <Link href="/#contact">
-                <button className="px-6 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium">
+                <button className="water-glass-btn px-6 py-3 rounded-xl text-xs font-semibold uppercase tracking-wider text-white">
                   Get in Touch
                 </button>
               </Link>

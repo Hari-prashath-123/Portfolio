@@ -77,39 +77,39 @@
 }
 
 .dark {
-  /* Dark mode styles for when class="dark" is applied */
+  /* Dark mode styles for when class="dark" is applied - Silver White Theme */
   --background: oklch(0.08 0 0);
   --foreground: oklch(0.98 0 0);
   --card: oklch(0.12 0 0);
   --card-foreground: oklch(0.98 0 0);
   --popover: oklch(0.15 0 0);
   --popover-foreground: oklch(0.98 0 0);
-  --primary: oklch(0.55 0.25 260);
-  --primary-foreground: oklch(0.98 0 0);
+  --primary: oklch(0.95 0 0);
+  --primary-foreground: oklch(0.08 0 0);
   --secondary: oklch(0.2 0 0);
   --secondary-foreground: oklch(0.98 0 0);
   --muted: oklch(0.25 0 0);
   --muted-foreground: oklch(0.75 0 0);
-  --accent: oklch(0.65 0.28 260);
+  --accent: oklch(0.85 0 0);
   --accent-foreground: oklch(0.08 0 0);
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(0.2 0 0);
   --input: oklch(0.15 0 0);
-  --ring: oklch(0.65 0.28 260);
-  --chart-1: oklch(0.65 0.28 260);
-  --chart-2: oklch(0.72 0.25 250);
-  --chart-3: oklch(0.58 0.22 270);
-  --chart-4: oklch(0.6 0.24 255);
-  --chart-5: oklch(0.68 0.26 265);
+  --ring: oklch(0.85 0 0);
+  --chart-1: oklch(0.95 0 0);
+  --chart-2: oklch(0.85 0 0);
+  --chart-3: oklch(0.75 0 0);
+  --chart-4: oklch(0.65 0 0);
+  --chart-5: oklch(0.55 0 0);
   --sidebar: oklch(0.1 0 0);
   --sidebar-foreground: oklch(0.98 0 0);
-  --sidebar-primary: oklch(0.55 0.25 260);
-  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-primary: oklch(0.95 0 0);
+  --sidebar-primary-foreground: oklch(0.08 0 0);
   --sidebar-accent: oklch(0.25 0 0);
   --sidebar-accent-foreground: oklch(0.98 0 0);
   --sidebar-border: oklch(0.2 0 0);
-  --sidebar-ring: oklch(0.65 0.28 260);
+  --sidebar-ring: oklch(0.85 0 0);
 }
 
 @theme inline {
@@ -168,7 +168,9 @@
   }
 
   .gradient-text {
-    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+    background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 45%, #cbd5e1 75%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   /* Added smooth animation utilities for fade-in and slide effects */
@@ -266,11 +268,11 @@
 .animated-gradient-dark {
   background: linear-gradient(
     -45deg,
-    rgba(15, 23, 42, 1),
-    rgba(30, 41, 59, 1),
-    rgba(15, 23, 42, 1),
-    rgba(23, 37, 84, 1),
-    rgba(15, 23, 42, 1)
+    #07090e,
+    #121620,
+    #090b10,
+    #151924,
+    #07090e
   );
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
@@ -312,7 +314,7 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(59, 130, 246, 0.05) 50%,
+    rgba(255, 255, 255, 0.08) 50%,
     transparent 100%
   );
   transform: translateX(-100%);
@@ -360,6 +362,362 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ======== 3D Perspective & Holographic Styles ======== */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.perspective-1200 {
+  perspective: 1200px;
+}
+
+.perspective-1600 {
+  perspective: 1600px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+/* Speedy Clockwise Rotation for the glowing transparent card behind */
+@keyframes rotateClockwiseSpeedy {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.rotate-clockwise-speedy {
+  animation: rotateClockwiseSpeedy 5s linear infinite !important;
+  will-change: transform;
+}
+
+/* Smooth Clockwise Rotation for low-glow subtle card behind */
+@keyframes rotateClockwiseSmooth {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.rotate-clockwise-smooth {
+  animation: rotateClockwiseSmooth 8s linear infinite !important;
+  will-change: transform;
+}
+
+/* Base steady normal tilt: facing straightly, does not move on its own */
+.card-steady-tilt {
+  transform: perspective(1000px) rotateY(0deg) rotateX(0deg) rotateZ(0deg);
+  transform-style: preserve-3d;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+/* Clean vertical float for secondary cards - perfectly straight facing */
+@keyframes holoGentleFloat {
+  0%, 100% {
+    transform: perspective(1000px) translateY(0px) rotateX(0deg) rotateY(0deg);
+  }
+  50% {
+    transform: perspective(1000px) translateY(-8px) rotateX(0deg) rotateY(0deg);
+  }
+}
+
+.holo-float-gentle {
+  animation: holoGentleFloat 6s ease-in-out infinite !important;
+  transform-style: preserve-3d !important;
+  will-change: transform;
+}
+
+/* Soft blurred glow/background shape that rotates independently */
+@keyframes rotateBgGlow {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  33% {
+    transform: rotate(120deg) scale(1.15) translate(20px, -15px);
+  }
+  66% {
+    transform: rotate(240deg) scale(0.9) translate(-15px, 18px);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+.rotate-bg-glow {
+  animation: rotateBgGlow 12s linear infinite !important;
+  will-change: transform;
+}
+
+/* ======== Water & Liquid Glass UI System ======== */
+/* Water Drop Morphing Animation */
+@keyframes waterMorph {
+  0%, 100% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    transform: rotate(0deg) scale(1);
+  }
+  33% {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+    transform: rotate(120deg) scale(1.06);
+  }
+  66% {
+    border-radius: 70% 30% 50% 50% / 30% 40% 60% 70%;
+    transform: rotate(240deg) scale(0.96);
+  }
+}
+
+.water-blob {
+  animation: waterMorph 16s ease-in-out infinite alternate !important;
+  will-change: transform, border-radius;
+}
+
+/* Water Glass Card - Professional frosted smoked glass surface (not too transparent) */
+.water-glass-card {
+  background: linear-gradient(
+    140deg,
+    rgba(255, 255, 255, 0.07) 0%,
+    rgba(16, 20, 28, 0.88) 25%,
+    rgba(10, 13, 20, 0.95) 100%
+  );
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 
+    0 25px 60px -15px rgba(0, 0, 0, 0.8),
+    0 0 25px rgba(255, 255, 255, 0.06),
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.4);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.water-glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 
+    0 30px 70px -10px rgba(0, 0, 0, 0.8),
+    0 0 35px rgba(255, 255, 255, 0.16),
+    inset 0 2px 4px 0 rgba(255, 255, 255, 0.5);
+  transform: translateY(-4px);
+}
+
+/* Water Glass Button - Liquid droplet feel */
+.water-glass-btn {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(226, 232, 240, 0.12) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow: 
+    0 8px 24px -4px rgba(0, 0, 0, 0.3),
+    0 0 18px rgba(255, 255, 255, 0.12),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 2px 0 rgba(0, 0, 0, 0.25);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.water-glass-btn:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(226, 232, 240, 0.22) 50%,
+    rgba(255, 255, 255, 0.12) 100%
+  );
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 
+    0 12px 32px -4px rgba(255, 255, 255, 0.2),
+    0 0 28px rgba(255, 255, 255, 0.25),
+    inset 0 2px 4px 0 rgba(255, 255, 255, 0.65);
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* Water Glass Pill Badge */
+.water-glass-pill {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(18, 22, 31, 0.75) 50%,
+    rgba(7, 10, 16, 0.90) 100%
+  );
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 
+    0 8px 20px -4px rgba(0, 0, 0, 0.4),
+    0 0 16px rgba(255, 255, 255, 0.1),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.35);
+}
+
+/* Water Glass Panel */
+.water-glass-panel {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(18, 22, 31, 0.6) 45%,
+    rgba(7, 10, 16, 0.8) 100%
+  );
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 
+    0 15px 40px -10px rgba(0, 0, 0, 0.6),
+    0 0 25px rgba(255, 255, 255, 0.08),
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* Status indicator pulse for 'Open to Opportunities' */
+@keyframes statusDotPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7), 0 0 10px rgba(34, 197, 94, 0.9);
+    opacity: 1;
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(34, 197, 94, 0), 0 0 18px rgba(34, 197, 94, 0.95);
+    opacity: 0.85;
+  }
+}
+
+.status-dot-pulse {
+  animation: statusDotPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ======== Glass Transparent UI System ======== */
+/* Dark/Glass-like Surface for portrait cards */
+.glass-card-surface {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.07) 0%,
+    rgba(18, 22, 31, 0.72) 35%,
+    rgba(7, 10, 16, 0.92) 100%
+  );
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 
+    0 25px 60px -15px rgba(0, 0, 0, 0.75),
+    0 0 35px -5px rgba(255, 255, 255, 0.1),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.4);
+}
+
+.light .glass-card-surface {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.88) 0%,
+    rgba(241, 245, 249, 0.78) 50%,
+    rgba(226, 232, 240, 0.85) 100%
+  );
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 25px 50px -15px rgba(99, 102, 241, 0.18),
+    0 0 30px -5px rgba(99, 102, 241, 0.1),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* General Glass Panel */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.light .glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* Glass Transparent Button */
+.glass-btn {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.32);
+  box-shadow: 0 8px 30px rgba(56, 189, 248, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.light .glass-btn {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.light .glass-btn:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.2);
+}
+
+/* Glass Transparent Pill / Badge */
+.glass-pill {
+  background: rgba(10, 15, 29, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.light .glass-pill {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* Glass Transparent Input */
+.glass-input {
+  background: rgba(255, 255, 255, 0.04) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  transition: all 0.3s ease;
+}
+
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(56, 189, 248, 0.6) !important;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.25) !important;
+}
+
+.light .glass-input {
+  background: rgba(255, 255, 255, 0.65) !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+}
+
+.light .glass-input:focus {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(99, 102, 241, 0.6) !important;
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.2) !important;
+}
+
 /* ======== Reduced motion ======== */
 @media (prefers-reduced-motion: reduce) {
   .floating-element,
@@ -367,7 +725,11 @@ html {
   .float-dot,
   .float-hexagon,
   .glow-pulse,
-  .card-shimmer::after {
+  .card-shimmer::after,
+  .holo-float-card,
+  .holo-float-gentle,
+  .rotate-bg-glow,
+  .status-dot-pulse {
     animation: none !important;
   }
   
@@ -379,5 +741,862 @@ html {
 /* ======== Hide Platform-Injected v0 Badge ======== */
 [id^="v0-built-with-button"] {
   display: none !important;
+}
+
+/* ======== HUD & Reference Aesthetics ======== */
+.hud-tag {
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.35rem 0.9rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hud-spotlight {
+  position: absolute;
+  top: -90px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  height: 240px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.08) 45%, transparent 75%);
+  clip-path: polygon(25% 0%, 75% 0%, 100% 100%, 0% 100%);
+  pointer-events: none;
+  filter: blur(14px);
+  opacity: 0.85;
+}
+
+.hud-card {
+  background: rgba(13, 16, 23, 0.75);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hud-card:hover {
+  border-color: rgba(255, 255, 255, 0.24);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.hud-giant-text {
+  font-size: clamp(3.2rem, 12.5vw, 13rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 40%, #94a3b8 70%, #475569 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 80px rgba(255, 255, 255, 0.15);
+  user-select: none;
+}
+
+.hud-pill-btn {
+  background: #ffffff;
+  color: #090d16;
+  font-weight: 600;
+  font-size: 0.825rem;
+  border-radius: 9999px;
+  padding: 0.65rem 1.4rem;
+  transition: all 0.25s ease;
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.25);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.hud-pill-btn:hover {
+  background: #f4f4f5;
+  box-shadow: 0 0 35px rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+/* ======== Train / Marquee Scroll Animations ======== */
+@keyframes marqueeLeft {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes marqueeRight {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.marquee-track--left {
+  animation: marqueeLeft 30s linear infinite;
+}
+
+.marquee-track--right {
+  animation: marqueeRight 30s linear infinite;
+}
+
+/* Pause on hover for the entire row */
+.marquee-row:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+.marquee-row {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+}
+
+/* Faster variant for projects section */
+.marquee-track--left-fast {
+  animation: marqueeLeft 25s linear infinite;
+}
+
+.marquee-row:hover .marquee-track--left-fast {
+  animation-play-state: paused;
+}
+
+/* =========================================
+   CONTACT SECTION MOTION
+   HERO EXCLUDED — DO NOT MOVE THESE RULES
+   ========================================= */
+
+/* ─── Background Typography Watermark ─── */
+.contact-bg-typography-container {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+  /* Fade in the whole container on load */
+  animation: contactBgFadeIn 1.4s ease-out 0ms both;
+}
+
+.contact-bg-typography-track {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  white-space: nowrap;
+  line-height: 1;
+  margin: 0;
+  padding: 0;
+}
+
+.contact-bg-text {
+  font-family: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
+  font-size: clamp(3.5rem, 10vw, 11rem);
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.065);
+  user-select: none;
+}
+
+/* Light mode: slightly more visible stroke */
+.light .contact-bg-text {
+  -webkit-text-stroke: 1px rgba(0, 0, 0, 0.055);
+}
+
+.contact-bg-sep {
+  font-size: clamp(2rem, 5vw, 6rem);
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.04);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+/* ─── Individual track drift keyframes (extremely subtle, each offset) ─── */
+
+/* Row A: drifts left → right slowly */
+@keyframes contactDriftA {
+  0%   { transform: translateX(-2%) translateY(0px); opacity: 0.9; }
+  50%  { transform: translateX(1.5%) translateY(-3px); opacity: 1; }
+  100% { transform: translateX(-2%) translateY(0px); opacity: 0.9; }
+}
+
+/* Row B: drifts right → left, offset phase */
+@keyframes contactDriftB {
+  0%   { transform: translateX(3%) translateY(0px); opacity: 1; }
+  50%  { transform: translateX(-1%) translateY(4px); opacity: 0.85; }
+  100% { transform: translateX(3%) translateY(0px); opacity: 1; }
+}
+
+/* Row C: very gentle sway */
+@keyframes contactDriftC {
+  0%   { transform: translateX(-4%) translateY(2px); opacity: 0.85; }
+  50%  { transform: translateX(0%) translateY(-2px); opacity: 1; }
+  100% { transform: translateX(-4%) translateY(2px); opacity: 0.85; }
+}
+
+/* Fade-in for the entire background container */
+@keyframes contactBgFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.contact-bg-drift-a {
+  animation: contactDriftA 20s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.contact-bg-drift-b {
+  animation: contactDriftB 25s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.contact-bg-drift-c {
+  animation: contactDriftC 18s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* ─── Left Contact Card ─── */
+.contact-left-card {
+  transform-style: preserve-3d;
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+.contact-left-card:hover {
+  transform: translateY(-4px) scale(1.005);
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  box-shadow:
+    0 30px 70px -10px rgba(0, 0, 0, 0.75),
+    0 0 40px rgba(255, 255, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* ─── Rotating inside card animation for contact left card ─── */
+@keyframes contactRotateInside {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.contact-rotate-card-inside {
+  animation: contactRotateInside 10s linear infinite !important;
+  will-change: transform;
+}
+
+/* ─── Radial glow orb that sits behind the inner code card ─── */
+@keyframes contactOrbPulse {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50%       { opacity: 0.85; transform: scale(1.12); }
+}
+
+.contact-inner-glow-orb {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 260px;
+  height: 180px;
+  background: radial-gradient(
+    ellipse at 50% 80%,
+    rgba(120, 100, 255, 0.22) 0%,
+    rgba(80, 60, 200, 0.12) 45%,
+    transparent 75%
+  );
+  pointer-events: none;
+  filter: blur(28px);
+  border-radius: 50%;
+  z-index: 0;
+  animation: contactOrbPulse 4s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+
+.dark .contact-inner-glow-orb {
+  background: radial-gradient(
+    ellipse at 50% 80%,
+    rgba(140, 120, 255, 0.28) 0%,
+    rgba(90, 70, 220, 0.15) 45%,
+    transparent 75%
+  );
+}
+
+/* ─── Nested Inner Code Card float + glow animation ─── */
+@keyframes contactInnerFloat {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-7px); }
+}
+
+@keyframes contactInnerGlowPulse {
+  0%, 100% {
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.7),
+      0 0 0px rgba(150, 120, 255, 0);
+  }
+  50% {
+    box-shadow:
+      0 14px 44px rgba(0, 0, 0, 0.8),
+      0 0 28px rgba(120, 100, 255, 0.18),
+      0 0 8px rgba(255, 255, 255, 0.06);
+  }
+}
+
+.contact-inner-code-card {
+  transform-style: preserve-3d;
+  position: relative;
+  z-index: 1;
+  animation:
+    contactInnerFloat 5s ease-in-out infinite,
+    contactInnerGlowPulse 5s ease-in-out infinite;
+  will-change: transform, box-shadow;
+  transition: border-color 0.3s ease;
+}
+
+.contact-inner-code-card:hover {
+  transform: translateY(-4px) translateZ(8px) !important;
+  animation-play-state: paused;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow:
+    0 18px 52px rgba(0, 0, 0, 0.8),
+    0 0 32px rgba(120, 100, 255, 0.22),
+    0 0 10px rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ─── Inner card shimmer sweep ─── */
+@keyframes contactShimmerSweep {
+  0%   { transform: translateX(-120%); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateX(120%); opacity: 0; }
+}
+
+.contact-inner-shimmer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.055) 50%,
+    transparent 65%
+  );
+  transform: translateX(-120%);
+  /* Trigger shimmer sweep every ~8s (3s sweep + 5s pause via delay cycling) */
+  animation: contactShimmerSweep 3s ease-in-out 2s infinite;
+  will-change: transform;
+}
+
+/* ─── Blinking cursor inside code card ─── */
+@keyframes contactCursorBlink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+.contact-cursor-blink {
+  display: inline-block;
+  width: 1px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 300;
+  animation: contactCursorBlink 1.1s step-end infinite;
+  margin-left: 1px;
+}
+
+/* ─── Right Contact Card (restrained) ─── */
+.contact-right-card {
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.contact-right-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+/* ─── Form Input Fields ─── */
+.contact-input-field {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.contact-input-field:focus {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06), 0 0 12px rgba(255, 255, 255, 0.08);
+}
+
+/* Light mode inputs */
+.light .contact-input-field {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #1a1a2e;
+}
+
+.light .contact-input-field:focus {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+}
+
+/* ─── Submit Button micro-interaction ─── */
+.contact-submit-btn {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.contact-submit-btn:hover:not(:disabled) {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 0 35px rgba(255, 255, 255, 0.5);
+}
+
+.contact-submit-btn:active:not(:disabled) {
+  transform: translateY(0px) scale(0.98);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.25);
+}
+
+.contact-submit-btn .btn-arrow-icon {
+  transition: transform 0.2s ease;
+}
+
+.contact-submit-btn:hover:not(:disabled) .btn-arrow-icon {
+  transform: translateX(3px);
+}
+
+/* ─── Reduced motion: disable all contact animations ─── */
+@media (prefers-reduced-motion: reduce) {
+  .contact-bg-drift-a,
+  .contact-bg-drift-b,
+  .contact-bg-drift-c,
+  .contact-bg-typography-container,
+  .contact-inner-code-card,
+  .contact-inner-shimmer,
+  .contact-cursor-blink {
+    animation: none !important;
+  }
+
+  .contact-left-card:hover {
+    transform: none;
+  }
+
+  .contact-right-card:hover {
+    transform: none;
+  }
+}
+
+/* =======================================================
+   LIGHT MODE OVERRIDES — Full Portfolio Adaptation
+   Applied when <html> or ancestor has class="light"
+   ======================================================= */
+
+/* ── Section Backgrounds ── */
+.light section[id],
+.light section.relative {
+  background-color: transparent;
+}
+
+/* Portfolio sections that have hardcoded dark backgrounds */
+.light #about,
+.light #roadmap,
+.light #skills,
+.light #projects,
+.light #contact {
+  background: linear-gradient(
+    180deg,
+    oklch(0.96 0 0) 0%,
+    oklch(0.94 0.004 260) 50%,
+    oklch(0.96 0 0) 100%
+  ) !important;
+}
+
+/* Ambient blobs look better slightly tinted in light mode */
+.light .bg-white\/5 {
+  background: rgba(99, 102, 241, 0.06) !important;
+}
+
+/* ── Header ── */
+.light header.sticky {
+  background: rgba(248, 250, 252, 0.88) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.light header a,
+.light header nav a,
+.light header span,
+.light header button {
+  color: oklch(0.25 0 0);
+}
+
+.light header nav a:hover {
+  color: oklch(0.1 0 0);
+}
+
+.light header .text-white\/70 { color: oklch(0.35 0 0) !important; }
+.light header .text-white\/60 { color: oklch(0.45 0 0) !important; }
+.light header .text-white\/80 { color: oklch(0.3 0 0) !important; }
+.light header .text-white { color: oklch(0.15 0 0) !important; }
+.light header .hover\:text-white:hover { color: oklch(0.08 0 0) !important; }
+.light header .text-white\/90 { color: oklch(0.18 0 0) !important; }
+
+/* Header mobile menu */
+.light header .bg-\[\#07090e\]\/95 {
+  background: rgba(248, 250, 252, 0.97) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.07) !important;
+}
+
+/* ── HUD Card (dark glass card used across all sections) ── */
+.light .hud-card {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  box-shadow:
+    0 4px 24px -4px rgba(99, 102, 241, 0.12),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 20px 50px -15px rgba(0, 0, 0, 0.08);
+  color: oklch(0.15 0 0);
+}
+
+.light .hud-card:hover {
+  border-color: rgba(99, 102, 241, 0.25);
+  box-shadow:
+    0 8px 36px -4px rgba(99, 102, 241, 0.18),
+    0 2px 0 rgba(255, 255, 255, 1) inset,
+    0 25px 60px -10px rgba(0, 0, 0, 0.1);
+}
+
+/* ── HUD Tag (pill badge) ── */
+.light .hud-tag {
+  color: oklch(0.35 0 0);
+  background: rgba(255, 255, 255, 0.75);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+/* ── HUD Giant Text ── */
+.light .hud-giant-text {
+  background: linear-gradient(180deg, #1a1a2e 0%, #2d2d4a 40%, #6366f1 70%, #818cf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+}
+
+/* ── HUD Pill Button ── */
+.light .hud-pill-btn {
+  background: oklch(0.15 0 0);
+  color: #ffffff;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.light .hud-pill-btn:hover {
+  background: oklch(0.1 0 0);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.25);
+}
+
+/* ── Text Color Overrides for Dark-coded text ── */
+/* White text → dark in light mode */
+.light .text-white { color: oklch(0.12 0 0) !important; }
+.light .text-white\/90 { color: oklch(0.18 0 0) !important; }
+.light .text-white\/85 { color: oklch(0.2 0 0) !important; }
+.light .text-white\/80 { color: oklch(0.22 0 0) !important; }
+.light .text-white\/70 { color: oklch(0.3 0 0) !important; }
+.light .text-white\/65 { color: oklch(0.35 0 0) !important; }
+.light .text-white\/60 { color: oklch(0.38 0 0) !important; }
+.light .text-white\/50 { color: oklch(0.45 0 0) !important; }
+.light .text-white\/40 { color: oklch(0.5 0 0) !important; }
+
+/* Slate text on dark → adapt for light */
+.light .text-slate-300 { color: oklch(0.35 0.05 255) !important; }
+.light .text-slate-300\/80 { color: oklch(0.4 0.05 255) !important; }
+
+/* ── Backgrounds that use white opacity ── */
+.light .bg-white\/\[0\.03\] {
+  background: rgba(0, 0, 0, 0.03) !important;
+}
+.light .bg-white\/\[0\.025\] {
+  background: rgba(0, 0, 0, 0.025) !important;
+}
+.light .bg-white\/5 {
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+.light .bg-white\/\[0\.04\] {
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+.light .bg-white\/\[0\.05\] {
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+.light .bg-white\/10 {
+  background: rgba(0, 0, 0, 0.07) !important;
+}
+
+/* Borders using white opacity */
+.light .border-white\/5 { border-color: rgba(0, 0, 0, 0.05) !important; }
+.light .border-white\/10 { border-color: rgba(0, 0, 0, 0.08) !important; }
+.light .border-white\/15 { border-color: rgba(0, 0, 0, 0.1) !important; }
+.light .border-white\/20 { border-color: rgba(0, 0, 0, 0.12) !important; }
+.light .border-white\/25 { border-color: rgba(0, 0, 0, 0.15) !important; }
+
+/* ── Hero Section (after landing) ── */
+.light .hud-card.p-4.rounded-2xl {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+/* ── Specular sheen lines (white glow) ── */
+.light .bg-gradient-to-r.from-transparent.via-white\/50 {
+  background: linear-gradient(to right, transparent, rgba(99, 102, 241, 0.18), transparent) !important;
+}
+
+/* ── Tech Stack Pills ── */
+.light .marquee-track > div {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: oklch(0.25 0 0) !important;
+}
+
+.light .marquee-track > div:hover {
+  border-color: rgba(99, 102, 241, 0.5) !important;
+  color: oklch(0.1 0 0) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.15) !important;
+}
+
+/* ── About Section — KPI metric pills ── */
+.light .group\/kpi div.text-xl,
+.light .group\/kpi div.text-2xl {
+  color: oklch(0.15 0 0) !important;
+}
+
+/* ── Contact Section ── */
+.light .contact-left-card {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.1) !important;
+}
+
+.light .contact-left-card:hover {
+  border-color: rgba(99, 102, 241, 0.3) !important;
+  box-shadow:
+    0 30px 70px -10px rgba(99, 102, 241, 0.15),
+    0 0 40px rgba(99, 102, 241, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Rotating card inside (reduce white glow for light mode) */
+.light .contact-rotate-card-inside > div:first-child {
+  background: linear-gradient(to top right, rgba(99, 102, 241, 0.12), rgba(139, 92, 246, 0.06), transparent) !important;
+}
+.light .contact-rotate-card-inside > div:nth-child(2) {
+  background: linear-gradient(to bottom right, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.04), transparent) !important;
+  border-color: rgba(99, 102, 241, 0.15) !important;
+}
+.light .contact-rotate-card-inside > div:nth-child(3) {
+  background: linear-gradient(to top left, rgba(99, 102, 241, 0.06), rgba(139, 92, 246, 0.03), transparent) !important;
+}
+.light .contact-rotate-card-inside > div:nth-child(4) {
+  background: rgba(99, 102, 241, 0.04) !important;
+}
+
+/* Contact inner code card */
+.light .contact-inner-code-card {
+  background: rgba(248, 250, 252, 0.95) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08) !important;
+}
+
+.light .contact-inner-code-card .text-slate-400 {
+  color: oklch(0.45 0 0) !important;
+}
+
+.light .contact-inner-code-card .text-white\/40 {
+  color: oklch(0.55 0 0) !important;
+}
+
+.light .contact-inner-code-card .text-white\/80 {
+  color: oklch(0.2 0 0) !important;
+}
+
+/* Contact right card (form) */
+.light .contact-right-card {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border-color: rgba(0, 0, 0, 0.09) !important;
+}
+
+/* Contact quick badge links */
+.light .contact-left-card .bg-white\/5 {
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+.light .contact-left-card .border-white\/10 {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+.light .contact-left-card .text-white\/80 {
+  color: oklch(0.28 0 0) !important;
+}
+
+/* ── Roadmap — HolographicCard in light mode ── */
+.light .holo-card-inner,
+.light [class*="holographic"] {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Roadmap connector line */
+.light .via-white\/15 {
+  --tw-gradient-stops: transparent, rgba(99, 102, 241, 0.15), transparent !important;
+}
+
+/* ── Water Glass Card (used in About/Contact) ── */
+.light .water-glass-card {
+  background: linear-gradient(
+    140deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(241, 245, 249, 0.9) 50%,
+    rgba(226, 232, 240, 0.88) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow:
+    0 20px 50px -15px rgba(99, 102, 241, 0.15),
+    0 0 20px rgba(255, 255, 255, 0.5),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+.light .water-glass-card:hover {
+  border-color: rgba(99, 102, 241, 0.3);
+  box-shadow:
+    0 25px 60px -10px rgba(99, 102, 241, 0.2),
+    0 0 30px rgba(99, 102, 241, 0.08);
+}
+
+/* ── Contact Separator dots (light color on dark) ── */
+.light .contact-bg-sep {
+  color: rgba(0, 0, 0, 0.04) !important;
+}
+
+/* ── Gradient text (hero name) ── */
+.light .gradient-text {
+  background: linear-gradient(135deg, #1a1a2e 0%, #2d2d4a 45%, #6366f1 75%, #818cf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ── Emerald accents stay visible in light mode ── */
+.light .text-emerald-300 { color: oklch(0.45 0.15 165) !important; }
+.light .text-emerald-400 { color: oklch(0.42 0.18 165) !important; }
+
+/* ── Project Card in light mode ── */
+.light .hud-card.rounded-\[28px\],
+.light .hud-card.rounded-\[32px\] {
+  background: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* ── Ambient glow orbs ── */
+.light .contact-inner-glow-orb {
+  background: radial-gradient(
+    ellipse at 50% 80%,
+    rgba(99, 102, 241, 0.12) 0%,
+    rgba(139, 92, 246, 0.06) 45%,
+    transparent 75%
+  ) !important;
+}
+
+/* ── Footer ── */
+.light footer {
+  background: oklch(0.93 0.003 260) !important;
+  border-top-color: rgba(0, 0, 0, 0.07) !important;
+  color: oklch(0.35 0 0) !important;
+}
+
+.light footer .text-white\/60 { color: oklch(0.4 0 0) !important; }
+.light footer .text-white\/40 { color: oklch(0.5 0 0) !important; }
+.light footer .text-white { color: oklch(0.15 0 0) !important; }
+
+/* ── HolographicCard solid-black variant in light mode ── */
+.light .bg-\[\#0b0d13\] {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ── Hero section (after landing hero) — text adapts in light mode ── */
+.light .animated-gradient-light h1 {
+  color: oklch(0.1 0 0) !important;
+}
+.light .animated-gradient-light p {
+  color: oklch(0.3 0 0) !important;
+}
+.light .animated-gradient-light .text-slate-300\/80 {
+  color: oklch(0.35 0.04 255) !important;
+}
+
+/* ── About: hover borders on KPI pills and cards ── */
+.light .hover\:border-white\/20:hover {
+  border-color: rgba(99, 102, 241, 0.25) !important;
+}
+.light .hover\:border-white\/25:hover {
+  border-color: rgba(99, 102, 241, 0.3) !important;
+}
+.light .hover\:border-white\/30:hover {
+  border-color: rgba(99, 102, 241, 0.35) !important;
+}
+
+/* ── About: leadership roles inner cards in light mode ── */
+.light .bg-white\/\[0\.03\].border.border-white\/10 {
+  background: rgba(248, 250, 252, 0.8) !important;
+  border-color: rgba(0, 0, 0, 0.07) !important;
+}
+.light .bg-white\/\[0\.025\].hover\:bg-white\/\[0\.06\] {
+  background: rgba(248, 250, 252, 0.75) !important;
+}
+
+/* ── Marquee row: make mask work with lighter BG ── */
+.light .marquee-row {
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    oklch(0.95 0 0) 8%,
+    oklch(0.95 0 0) 92%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    oklch(0.95 0 0) 8%,
+    oklch(0.95 0 0) 92%,
+    transparent 100%
+  );
+}
+
+/* ── Hero landing section (pure white canvas) stays white in both modes ── */
+.hero-landing-canvas {
+  background: #ffffff !important;
 }
 
