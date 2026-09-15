@@ -54,7 +54,7 @@ export default function AdminLoginPage() {
             </svg>
           </div>
           <h1 className="text-2xl font-bold text-white">Admin Portal</h1>
-          <p className="text-slate-400 text-sm mt-1">Hari Prashath — Portfolio Admin</p>
+          <p className="text-slate-400 text-sm mt-1">Hariprashath — Portfolio Admin</p>
         </div>
 
         {/* Card */}

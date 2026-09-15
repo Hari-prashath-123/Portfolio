@@ -10,7 +10,7 @@ const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Hari Prashath - AI & Data Science Portfolio",
+  title: "Hariprashath's Portfolio",
   description:
     "AI & Data Science student specializing in Generative AI and Agentic AI projects. Explore my portfolio featuring AutoFixHub, Wire EDM simulations, and data-driven solutions.",
 
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     icon: "/logo.jpg",
   },
   openGraph: {
-    title: "Hari Prashath - AI & Data Science Portfolio",
+    title: "Hariprashath's Portfolio",
     description: "Explore my AI and Data Science projects",
     type: "website",
   },
