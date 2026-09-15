@@ -4,7 +4,7 @@ import ProjectCard from "./project-card"
 import { AnimateOnScroll } from "./scroll-animations"
 import type { Project } from "@/lib/portfolio-data"
 
-const PROJECTS = [
+const DEFAULT_PROJECTS = [
   {
     id: "idcs",
     projectIndex: "01",
@@ -73,9 +73,13 @@ const PROJECTS = [
   },
 ]
 
-export default function Projects({ projects }: { projects: Project[] }) {
-  // Duplicate for seamless looping
-  const PROJECTS_DOUBLE = [...projects, ...projects]
+export default function Projects({ projects }: { projects?: Project[] }) {
+  const activeProjects = (projects && projects.length > 0) ? projects : DEFAULT_PROJECTS
+  const total = activeProjects.length || 1
+
+  // Duplicate for seamless infinite carousel loop
+  const PROJECTS_DOUBLE = [...activeProjects, ...activeProjects]
+
   return (
     <section id="projects" className="relative py-28 px-4 bg-[#07090e] overflow-hidden">
       {/* Ambient background glow */}
@@ -104,14 +108,25 @@ export default function Projects({ projects }: { projects: Project[] }) {
         <AnimateOnScroll animation="fade-up" delay={100}>
           <div className="marquee-row py-4 -mx-4 px-4">
             <div className="marquee-track marquee-track--left-fast items-stretch">
-              {PROJECTS_DOUBLE.map((project, index) => (
-                <div
-                  key={`${project.id}-${index}`}
-                  className="flex-shrink-0 w-[300px] sm:w-[340px] mx-3 h-[360px]"
-                >
-                  <ProjectCard {...project} />
-                </div>
-              ))}
+              {PROJECTS_DOUBLE.map((project, index) => {
+                // Dynamically compute sequential index: 01, 02, 03, 04...
+                const itemNumber = (index % total) + 1
+                const formattedIndex = project.projectIndex || String(itemNumber).padStart(2, "0")
+                const category = project.category || (project.tags && project.tags[0]) || "Engineering"
+
+                return (
+                  <div
+                    key={`${project.id}-${index}`}
+                    className="flex-shrink-0 w-[300px] sm:w-[340px] mx-3 h-[360px]"
+                  >
+                    <ProjectCard
+                      {...project}
+                      projectIndex={formattedIndex}
+                      category={category}
+                    />
+                  </div>
+                )
+              })}
             </div>
           </div>
         </AnimateOnScroll>
