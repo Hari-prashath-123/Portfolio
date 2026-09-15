@@ -62,6 +62,7 @@ export interface Project {
   liveUrl?: string
   year: string
   category?: string
+  projectIndex?: string
 }
 
 export interface ContactData {
