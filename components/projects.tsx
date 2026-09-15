@@ -2,80 +2,80 @@
 
 import ProjectCard from "./project-card"
 import { AnimateOnScroll } from "./scroll-animations"
+import type { Project } from "@/lib/portfolio-data"
 
 const PROJECTS = [
   {
     id: "idcs",
     projectIndex: "01",
-    category: "Fintech & Security",
-    title: "Gateway System – IDCS ERP Framework",
+    category: "Enterprise ERP",
+    title: "IDCS – Unified Institutional ERP Framework",
     description:
-      "Centralized institutional ERP and secure transaction management simulator automating academic and administrative workflows, biometric tracking, and role-based access control.",
+      "Centralized institutional ERP platform automating academic and administrative workflows — biometric attendance, payroll analytics, leave management, event approvals, and role-based access control.",
     tags: ["React", "Django REST", "JWT", "PostgreSQL"],
-    repoUrl: "https://github.com/Hari-prashath-123",
+    repoUrl: "https://github.com/Pixel-Square/IDCS-Restart",
+    year: "2026",
+  },
+  {
+    id: "centennial-connect",
+    projectIndex: "02",
+    category: "SaaS & Product Engineering",
+    title: "Centennial Connect – AI Business Calling SaaS",
+    description:
+      "Production SaaS platform for AI-powered business calling: virtual numbers, real-time AI voice agents, and intelligent power dialing for sales and support teams.",
+    tags: ["TypeScript", "React", "SaaS", "AI Voice"],
+    repoUrl: "https://github.com/Hari-prashath-123/centennial-connect",
     year: "2026",
   },
   {
     id: "autofixhub",
-    projectIndex: "02",
+    projectIndex: "03",
     category: "Agentic AI & DevOps",
-    title: "AutoFixHub Autonomous Code Fixer",
+    title: "AutoFixHub – Autonomous Code Fixer",
     description:
-      "Agentic AI tool that autonomously analyzes errors, drafts code resolutions, and commits fixes to GitHub using multi-agent LLM workflows.",
+      "Agentic AI tool that autonomously analyzes code issues and commits fixes directly to GitHub using LLM agents and the GitHub API.",
     tags: ["Agentic AI", "Python", "LLM", "GitHub APIs"],
     repoUrl: "https://github.com/Hari-prashath-123",
     year: "2025",
   },
   {
-    id: "saas-platform",
-    projectIndex: "03",
-    category: "Cloud Architecture",
-    title: "Multi-Tenant SaaS Platform",
-    description:
-      "Architected a containerized multi-tenant SaaS platform enforcing strict tenant data isolation, secure schema routing, and automated cluster deployment.",
-    tags: ["Node.js", "MongoDB", "Docker", "Express"],
-    repoUrl: "https://github.com/Hari-prashath-123",
-    year: "2025",
-  },
-  {
-    id: "browser-extension",
-    projectIndex: "04",
-    category: "Browser Automation",
-    title: "Productivity Suite Extension",
-    description:
-      "Developed a custom Chrome extension using JavaScript and Chrome APIs to manage tasks, automate workflows, and boost daily productivity.",
-    tags: ["JavaScript", "Chrome APIs", "Tailwind CSS"],
-    repoUrl: "https://github.com/Hari-prashath-123",
-    year: "2025",
-  },
-  {
     id: "wire-edm",
-    projectIndex: "05",
+    projectIndex: "04",
     category: "Simulation & AI",
     title: "Wire EDM AI Simulator",
     description:
-      "Web-based CNC simulation using React, TypeScript, and AI-powered performance metrics visualization for wire electrical discharge machining.",
+      "Web-based CNC Wire EDM simulation built with React and TypeScript featuring AI-powered performance metrics visualization.",
     tags: ["React", "TypeScript", "AI", "CNC Sim"],
-    repoUrl: "https://github.com/Hari-prashath-123",
+    repoUrl: "https://github.com/Hari-prashath-123/Wire-EDM-new",
     year: "2025",
   },
   {
-    id: "ai-career",
-    projectIndex: "06",
-    category: "Generative AI",
-    title: "AI Career Navigator",
+    id: "academic-rag",
+    projectIndex: "05",
+    category: "GenAI & Full Stack",
+    title: "Academic RAG",
     description:
-      "AI-powered career guidance platform built using React, Supabase, and Hugging Face APIs. Developed at HackFinity 2025 National Hackathon.",
-    tags: ["React", "Supabase", "Hugging Face", "GenAI"],
-    repoUrl: "https://github.com/Hari-prashath-123",
+      "Retrieval-Augmented Generation system enabling students to query academic course materials using natural language and receive context-grounded answers via LLM APIs.",
+    tags: ["RAG", "GenAI", "React", "LLM APIs"],
+    repoUrl: "https://github.com/Hari-prashath-123/Academic-Rag",
     year: "2025",
+  },
+  {
+    id: "recruitment-automation",
+    projectIndex: "06",
+    category: "Business Automation",
+    title: "Recruitment Automation – Centennial",
+    description:
+      "Automation tool for resume screening and candidate shortlisting to streamline internal recruitment workflows at Centennial InfoTech.",
+    tags: ["Automation", "TypeScript", "AI", "React"],
+    repoUrl: "https://github.com/Hari-prashath-123/Recruitment-Automation-Centennial",
+    year: "2026",
   },
 ]
 
-// Duplicate for seamless looping
-const PROJECTS_DOUBLE = [...PROJECTS, ...PROJECTS]
-
-export default function Projects() {
+export default function Projects({ projects }: { projects: Project[] }) {
+  // Duplicate for seamless looping
+  const PROJECTS_DOUBLE = [...projects, ...projects]
   return (
     <section id="projects" className="relative py-28 px-4 bg-[#07090e] overflow-hidden">
       {/* Ambient background glow */}

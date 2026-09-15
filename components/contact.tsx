@@ -4,8 +4,9 @@ import type React from "react"
 import { useState } from "react"
 import { AnimateOnScroll } from "./scroll-animations"
 import { ArrowRight, Mail, Phone, MapPin } from "lucide-react"
+import type { ContactData } from "@/lib/portfolio-data"
 
-export default function Contact() {
+export default function Contact({ contact }: { contact: ContactData }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formData, setFormData] = useState({
     firstName: "",
@@ -161,14 +162,14 @@ export default function Contact() {
                     {/* Compact contact quick badges */}
                     <div className="flex flex-wrap items-center gap-3 mb-6 text-xs font-mono">
                       <a 
-                        href="mailto:hariprashath321@gmail.com" 
+                        href={`mailto:${contact.email}`} 
                         className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/25 text-white/80 hover:text-white transition-all backdrop-blur-md"
                       >
                         <Mail className="w-3.5 h-3.5 text-slate-300" />
-                        <span>hariprashath321@gmail.com</span>
+                        <span>{contact.email}</span>
                       </a>
                       <a 
-                        href="https://github.com/Hari-prashath-123" 
+                        href={contact.github} 
                         target="_blank" 
                         rel="noopener noreferrer" 
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/25 text-white/80 hover:text-white transition-all backdrop-blur-md"
@@ -177,7 +178,7 @@ export default function Contact() {
                         <span>GitHub</span>
                       </a>
                       <a 
-                        href="https://linkedin.com/in/hariprashath-b-3029s/" 
+                        href={contact.linkedin} 
                         target="_blank" 
                         rel="noopener noreferrer" 
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/25 text-white/80 hover:text-white transition-all backdrop-blur-md"

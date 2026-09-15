@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState, useCallback } from "react"
 import Image from "next/image"
 
-export default function HeroLanding() {
+export default function HeroLanding({ name }: { name?: string }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isTouchDevice, setIsTouchDevice] = useState(false)
@@ -230,7 +230,8 @@ export default function HeroLanding() {
 
       // 2. Compute dynamic responsive typography size
       // Spanning 75-88% of viewport width
-      const targetText = "HARIPRASHATH"
+      const cleanName = (name || "HARIPRASHATH").replace(/[^a-zA-Z0-9]/g, "").toUpperCase() || "HARIPRASHATH"
+      const targetText = cleanName
       textCtx.save()
 
       let fontSize = Math.floor(width * 0.125)

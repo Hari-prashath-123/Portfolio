@@ -2,14 +2,14 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
 import { AnimateOnScroll } from "./scroll-animations"
 import FloatingElements from "./floating-elements"
 import { useTheme } from "./theme-provider"
 import { HolographicCard } from "@/components/ui/holographic-card"
+import type { HeroData } from "@/lib/portfolio-data"
 
-export default function Hero() {
+export default function Hero({ data }: { data: HeroData }) {
   const [isLoaded, setIsLoaded] = useState(false)
   const { theme } = useTheme()
 
@@ -45,7 +45,7 @@ export default function Hero() {
               <div className="relative w-full h-full overflow-hidden rounded-[22px]">
                 <Image
                   src="/Profile.jpeg"
-                  alt="Hariprashath B - Profile Photo"
+                  alt={`${data.name || "Profile"} - Photo`}
                   fill
                   className="object-cover object-top"
                   priority
@@ -86,23 +86,22 @@ export default function Hero() {
               <div className="inline-block">
                 <span className="hud-tag">
                   <span className="w-1.5 h-1.5 rounded-full bg-slate-200 animate-pulse shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
-                  AI Engineer &amp; Full-Stack Architect
+                  {data.role || "AI Engineer & Full-Stack Architect"}
                 </span>
               </div>
 
-              {/* Name is the primary anchor — large and bold */}
+              {/* Name is dynamic from MongoDB */}
               <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold leading-[1.05] tracking-tight text-white">
-                Hariprashath B
+                {data.name || "Hariprashath B"}
               </h1>
 
-              {/* Subtitle is smaller — de-emphasised relative to name */}
+              {/* Subtitle is dynamic from MongoDB */}
               <p className="text-base sm:text-lg md:text-xl font-medium text-slate-300/80 tracking-wide">
-                Crafting Intelligent Systems
+                {data.tagline}
               </p>
 
               <p className="text-base sm:text-lg max-w-lg leading-relaxed text-white/70">
-                Final-year B.Tech AI &amp; Data Science student building agentic AI systems, generative AI solutions, and
-                full-stack platforms that solve real-world problems.
+                {data.bio}
               </p>
             </div>
 
@@ -122,23 +121,19 @@ export default function Hero() {
               </a>
             </div>
 
-            {/* Stats */}
-            <AnimateOnScroll animation="fade-up" delay={400}>
-              <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row gap-4 text-sm">
-                <div className="hud-card p-4 rounded-2xl flex-1 hover:-translate-y-1 transition-all duration-300">
-                  <div className="font-bold text-lg text-white">Final Year</div>
-                  <div className="text-white/50 text-xs">B.Tech AI &amp; Data Science</div>
+            {/* Stats — driven by MongoDB data */}
+            {data.stats && data.stats.length > 0 && (
+              <AnimateOnScroll animation="fade-up" delay={400}>
+                <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row gap-4 text-sm">
+                  {data.stats.map((stat, idx) => (
+                    <div key={idx} className="hud-card p-4 rounded-2xl flex-1 hover:-translate-y-1 transition-all duration-300">
+                      <div className="font-bold text-lg text-white">{stat.value}</div>
+                      <div className="text-white/50 text-xs">{stat.label}</div>
+                    </div>
+                  ))}
                 </div>
-                <div className="hud-card p-4 rounded-2xl flex-1 hover:-translate-y-1 transition-all duration-300">
-                  <div className="font-bold text-lg text-white">8+ Projects</div>
-                  <div className="text-white/50 text-xs">Production AI Systems</div>
-                </div>
-                <div className="hud-card p-4 rounded-2xl flex-1 hover:-translate-y-1 transition-all duration-300">
-                  <div className="font-bold text-lg text-white">President</div>
-                  <div className="text-white/50 text-xs">AGEN Club @ KRCT</div>
-                </div>
-              </div>
-            </AnimateOnScroll>
+              </AnimateOnScroll>
+            )}
           </div>
         </div>
       </div>

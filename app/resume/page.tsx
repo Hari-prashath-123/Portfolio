@@ -70,7 +70,7 @@ export default function ResumePage() {
                     <div>
                       <h3 className="text-lg font-bold text-foreground">B.Tech in AI & Data Science</h3>
                       <p className="text-muted-foreground text-sm">K. Ramakrishnan College of Technology (KRCT), Trichy</p>
-                      <p className="text-xs text-primary font-semibold mt-1">Anna University • Graduating 2027 • CGPA: 7.89 (till 5th Semester)</p>
+                      <p className="text-xs text-primary font-semibold mt-1">Anna University • Graduating 2027 • CGPA: 7.84 (till 6th Semester)</p>
                     </div>
                   </div>
                 </section>
@@ -83,9 +83,17 @@ export default function ResumePage() {
                   </h2>
                   <div className="space-y-3">
                     <div>
-                      <h3 className="text-lg font-bold text-foreground">AI & Cloud Computing Intern</h3>
+                      <h3 className="text-lg font-bold text-foreground">React.js &amp; Vite Developer Intern</h3>
+                      <p className="text-muted-foreground text-sm">Centennial InfoTech Pvt. Ltd.</p>
+                      <p className="text-xs text-primary font-semibold mt-1">Jul 2026 &ndash; Present</p>
+                      <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+                        Building Centennial Connect, a production SaaS platform for AI-powered business calling — virtual numbers, real-time AI voice agents, and intelligent power dialing. Also contributing to a Recruitment Automation tool for internal hiring workflows.
+                      </p>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-foreground">AI &amp; Cloud Computing Intern</h3>
                       <p className="text-muted-foreground text-sm">CloudplusAI Tech</p>
-                      <p className="text-xs text-primary font-semibold mt-1">Apr 2025 – Jun 2025</p>
+                      <p className="text-xs text-primary font-semibold mt-1">Apr 2025 &ndash; Jun 2025</p>
                       <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
                         Worked on AI-integrated cloud solutions and deployment workflows.
                       </p>
@@ -101,8 +109,9 @@ export default function ResumePage() {
                   </h2>
                   <ul className="space-y-2.5">
                     {[
+                      "Applied Generative AI Specialization – Simplilearn (Completed with Distinction, May 2026)",
                       "PL-300: Microsoft Power BI Data Analyst Associate – Microsoft (May 2025)",
-                      "Generative AI, Prompt Engineering & ChatGPT – Simplilearn (May 2025)",
+                      "Essentials of Generative AI, Prompt Engineering & ChatGPT – Simplilearn (May 2025)",
                       "Cloud Computing with AI Specialist Intern – CloudplusAI Tech (Apr–Jun 2025)",
                       "Foundations: Programming Refresher – Simplilearn",
                       "Python for Data Science – Simplilearn",

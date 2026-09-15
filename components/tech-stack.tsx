@@ -1,42 +1,46 @@
 "use client"
 
 import { AnimateOnScroll } from "./scroll-animations"
+import type { SkillsData } from "@/lib/portfolio-data"
 
-export default function TechStack() {
-  const row1 = [
-    "Tailwind CSS",
-    "Bootstrap",
-    "Node.js",
-    "Express.js",
-    "Java",
-    "Python",
-    "REST APIs",
-    "JWT Auth",
-    "MySQL",
-    "MongoDB",
-    "PostgreSQL",
-    "Docker",
-    "TypeScript",
-    "React",
-    "Next.js",
-  ]
+const DEFAULT_ROW_1 = [
+  "Tailwind CSS",
+  "Bootstrap",
+  "Node.js",
+  "Express.js",
+  "Java",
+  "Python",
+  "REST APIs",
+  "JWT Auth",
+  "MySQL",
+  "MongoDB",
+  "PostgreSQL",
+  "Docker",
+  "TypeScript",
+  "React",
+  "Next.js",
+]
 
-  const row2 = [
-    "LLMs",
-    "Computer Vision",
-    "Prompt Engineering",
-    "Machine Learning",
-    "NLP",
-    "Generative AI",
-    "Agentic AI",
-    "Deep Learning",
-    "TensorFlow",
-    "PyTorch",
-    "Hugging Face",
-    "Autonomous Agents",
-    "LangChain",
-    "Vector DBs",
-  ]
+const DEFAULT_ROW_2 = [
+  "LLMs",
+  "Computer Vision",
+  "Prompt Engineering",
+  "Machine Learning",
+  "NLP",
+  "Generative AI",
+  "Agentic AI",
+  "Deep Learning",
+  "TensorFlow",
+  "PyTorch",
+  "Hugging Face",
+  "Autonomous Agents",
+  "LangChain",
+  "Vector DBs",
+]
+
+export default function TechStack({ skills }: { skills?: SkillsData }) {
+  const row1 = (skills?.row1 && skills.row1.length > 0) ? skills.row1 : DEFAULT_ROW_1
+  const row2 = (skills?.row2 && skills.row2.length > 0) ? skills.row2 : DEFAULT_ROW_2
 
   // Duplicate items so the marquee looks seamless (we translate -50%)
   const row1Double = [...row1, ...row1]
@@ -68,40 +72,40 @@ export default function TechStack() {
 
         {/* Train / Marquee Rows */}
         <AnimateOnScroll animation="fade-up" delay={100}>
-          <div className="space-y-4 max-w-5xl mx-auto">
-
-            {/* Row 1 — scrolls RIGHT (→) */}
-            <div className="marquee-row py-1">
-              <div className="marquee-track marquee-track--right gap-2.5 sm:gap-3">
-                {row1Double.map((tech, i) => (
+          <div className="space-y-6">
+            {/* Row 1: Left to Right */}
+            <div className="marquee-container overflow-hidden relative">
+              <div className="marquee-fade-left" />
+              <div className="marquee-fade-right" />
+              <div className="marquee-track flex gap-3 w-max animate-marquee">
+                {row1Double.map((tech, index) => (
                   <div
-                    key={`r1-${i}`}
-                    className="flex-shrink-0 px-5 py-2.5 rounded-full bg-white/[0.04] backdrop-blur-xl border border-white/10 text-white/85 text-xs sm:text-sm font-medium tracking-wide shadow-sm
-                      hover:border-white/50 hover:text-white hover:bg-white/[0.1] hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(255,255,255,0.15)] hover:scale-105
-                      transition-all duration-200 cursor-default select-none mx-1.5"
+                    key={`${tech}-${index}`}
+                    className="water-glass-pill px-5 py-2.5 rounded-2xl flex items-center gap-2 text-sm font-medium text-white/90 whitespace-nowrap border border-white/10 hover:border-white/30 hover:scale-105 transition-all duration-200"
                   >
+                    <span className="w-1.5 h-1.5 rounded-full bg-white/60" />
                     {tech}
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Row 2 — scrolls LEFT (←) */}
-            <div className="marquee-row py-1">
-              <div className="marquee-track marquee-track--left gap-2.5 sm:gap-3">
-                {row2Double.map((tech, i) => (
+            {/* Row 2: Right to Left */}
+            <div className="marquee-container overflow-hidden relative">
+              <div className="marquee-fade-left" />
+              <div className="marquee-fade-right" />
+              <div className="marquee-track flex gap-3 w-max animate-marquee-reverse">
+                {row2Double.map((tech, index) => (
                   <div
-                    key={`r2-${i}`}
-                    className="flex-shrink-0 px-5 py-2.5 rounded-full bg-white/[0.04] backdrop-blur-xl border border-white/10 text-white/85 text-xs sm:text-sm font-medium tracking-wide shadow-sm
-                      hover:border-white/50 hover:text-white hover:bg-white/[0.1] hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(255,255,255,0.15)] hover:scale-105
-                      transition-all duration-200 cursor-default select-none mx-1.5"
+                    key={`${tech}-${index}`}
+                    className="water-glass-pill px-5 py-2.5 rounded-2xl flex items-center gap-2 text-sm font-medium text-white/90 whitespace-nowrap border border-white/10 hover:border-white/30 hover:scale-105 transition-all duration-200"
                   >
+                    <span className="w-1.5 h-1.5 rounded-full bg-white/60" />
                     {tech}
                   </div>
                 ))}
               </div>
             </div>
-
           </div>
         </AnimateOnScroll>
       </div>

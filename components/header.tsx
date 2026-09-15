@@ -4,9 +4,11 @@ import Link from "next/link"
 import { useState } from "react"
 import { useTheme } from "./theme-provider"
 
-export default function Header() {
+export default function Header({ name }: { name?: string }) {
   const [isOpen, setIsOpen] = useState(false)
   const { theme, toggleTheme } = useTheme()
+
+  const displayName = name ? name.split(" ")[0] : "Hariprashath"
 
   const navItems = [
     { label: "Home", href: "#" },
@@ -20,10 +22,10 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 bg-[#07090e]/75 backdrop-blur-2xl border-b border-white/10 transition-all duration-300">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
-        {/* Brand / Name Logo matching reference Sushmita . style */}
+        {/* Brand / Name Logo */}
         <Link href="/" className="flex items-center gap-1.5 group">
           <span className="text-lg sm:text-xl font-extrabold tracking-tight text-white group-hover:text-white/90 transition-colors">
-            Hariprashath
+            {displayName}
           </span>
           <span className="w-1.5 h-1.5 rounded-full bg-white ml-0.5 animate-pulse" />
         </Link>

@@ -7,22 +7,29 @@ import Projects from "@/components/projects"
 import About from "@/components/about"
 import Contact from "@/components/contact"
 import Footer from "@/components/footer"
+import { readPortfolioData } from "@/lib/portfolio-data"
 
-export default function Home() {
+// Force dynamic server rendering on every request — ensures MongoDB changes reflect immediately
+export const dynamic = "force-dynamic"
+export const revalidate = 0
+
+export default async function Home() {
+  const portfolioData = await readPortfolioData()
+
   return (
     <main className="min-h-screen bg-background text-foreground">
       {/* 100vh Pure White Cinematic Editorial Landing Hero with Liquid Typography */}
-      <HeroLanding />
+      <HeroLanding name={portfolioData.hero.name} />
 
       {/* Existing Portfolio Architecture & Navigation */}
-      <Header />
-      <Hero />
+      <Header name={portfolioData.hero.name} />
+      <Hero data={portfolioData.hero} />
       <Roadmap />
-      <TechStack />
-      <Projects />
-      <About />
-      <Contact />
-      <Footer />
+      <TechStack skills={portfolioData.skills} />
+      <Projects projects={portfolioData.projects} />
+      <About data={portfolioData.about} />
+      <Contact contact={portfolioData.contact} />
+      <Footer name={portfolioData.hero.name} contact={portfolioData.contact} />
     </main>
   )
 }

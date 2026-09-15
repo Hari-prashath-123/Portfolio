@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import type { PortfolioData, Project } from "@/lib/portfolio-data"
+import type { PortfolioData, Project, ExperienceRole, PillarItem, CertificationItem, KpiMetric } from "@/lib/portfolio-data"
 
-type Tab = "hero" | "about" | "projects" | "contact" | "media"
+type Tab = "hero" | "about" | "skills" | "projects" | "contact" | "media"
 
 function TagInput({ tags, onChange }: { tags: string[]; onChange: (tags: string[]) => void }) {
   const [input, setInput] = useState("")
@@ -33,7 +33,7 @@ function TagInput({ tags, onChange }: { tags: string[]; onChange: (tags: string[
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); add() } }}
-          placeholder="Add tag and press Enter"
+          placeholder="Type skill & press Enter"
           className="flex-1 px-3 py-2 text-sm rounded-lg bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30"
         />
         <button type="button" onClick={add} className="px-3 py-2 text-sm rounded-lg bg-blue-600 text-white hover:bg-blue-500 transition-colors">Add</button>
@@ -118,12 +118,11 @@ function FileUploader({
         {uploaded && (
           <span className="text-green-400 text-sm flex items-center gap-1.5 animate-in fade-in">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-            Uploaded!
+            Uploaded successfully!
           </span>
         )}
       </div>
 
-      {/* Current file preview */}
       {preview && type !== "resume" && (
         <div className="relative w-24 h-24 rounded-xl overflow-hidden border border-slate-700">
           <img src={preview} alt="Current" className="w-full h-full object-cover" />
@@ -132,11 +131,10 @@ function FileUploader({
       {preview && type === "resume" && (
         <a href={preview} target="_blank" className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 text-blue-400 text-sm hover:text-blue-300 transition-colors border border-slate-700">
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-          View current resume
+          View Current Resume (/resume.pdf)
         </a>
       )}
 
-      {/* Drop zone */}
       <label
         className={`flex flex-col items-center justify-center w-full h-36 rounded-xl border-2 border-dashed cursor-pointer transition-all duration-200 ${
           dragOver
@@ -204,19 +202,34 @@ export default function AdminPage() {
       if (res.ok) {
         setSaved(true)
         setTimeout(() => setSaved(false), 3000)
+      } else {
+        alert("Save failed with status " + res.status)
       }
     } catch {
-      alert("Save failed")
+      alert("Network error: Save failed")
     } finally {
       setSaving(false)
     }
   }
+
+  // Ctrl+S / Cmd+S shortcut to save
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+        e.preventDefault()
+        save()
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [data])
 
   const logout = async () => {
     await fetch("/api/admin/logout", { method: "POST" })
     router.push("/admin/login")
   }
 
+  // ─── Hero Helpers ────────────────────────────────────────────────────────
   const updateHero = (field: string, value: string) => {
     if (!data) return
     setData({ ...data, hero: { ...data.hero, [field]: value } })
@@ -229,31 +242,124 @@ export default function AdminPage() {
     setData({ ...data, hero: { ...data.hero, stats } })
   }
 
-  const updateAboutBio = (index: number, value: string) => {
+  const addStat = () => {
     if (!data) return
-    const bio = [...data.about.bio]
-    bio[index] = value
-    setData({ ...data, about: { ...data.about, bio } })
+    setData({ ...data, hero: { ...data.hero, stats: [...data.hero.stats, { value: "New", label: "Metric" }] } })
   }
 
-  const updateCerts = (value: string) => {
+  const deleteStat = (index: number) => {
     if (!data) return
-    const certifications = value.split("\n").filter(Boolean)
+    const stats = data.hero.stats.filter((_, i) => i !== index)
+    setData({ ...data, hero: { ...data.hero, stats } })
+  }
+
+  // ─── About Helpers ───────────────────────────────────────────────────────
+  const updateAbout = (field: string, value: any) => {
+    if (!data) return
+    setData({ ...data, about: { ...data.about, [field]: value } })
+  }
+
+  const updateParagraph = (index: number, value: string) => {
+    if (!data) return
+    const paragraphs = [...data.about.paragraphs]
+    paragraphs[index] = value
+    setData({ ...data, about: { ...data.about, paragraphs } })
+  }
+
+  const addParagraph = () => {
+    if (!data) return
+    setData({ ...data, about: { ...data.about, paragraphs: [...data.about.paragraphs, ""] } })
+  }
+
+  const deleteParagraph = (index: number) => {
+    if (!data) return
+    setData({ ...data, about: { ...data.about, paragraphs: data.about.paragraphs.filter((_, i) => i !== index) } })
+  }
+
+  const updateKpi = (index: number, field: keyof KpiMetric, value: string) => {
+    if (!data) return
+    const kpis = [...data.about.kpis]
+    kpis[index] = { ...kpis[index], [field]: value }
+    setData({ ...data, about: { ...data.about, kpis } })
+  }
+
+  const addKpi = () => {
+    if (!data) return
+    setData({ ...data, about: { ...data.about, kpis: [...data.about.kpis, { value: "0", label: "Metric" }] } })
+  }
+
+  const deleteKpi = (index: number) => {
+    if (!data) return
+    setData({ ...data, about: { ...data.about, kpis: data.about.kpis.filter((_, i) => i !== index) } })
+  }
+
+  const updateExperience = (index: number, field: keyof ExperienceRole, value: string) => {
+    if (!data) return
+    const experience = [...data.about.experience]
+    experience[index] = { ...experience[index], [field]: value }
+    setData({ ...data, about: { ...data.about, experience } })
+  }
+
+  const addExperience = () => {
+    if (!data) return
+    const newItem: ExperienceRole = {
+      title: "New Role",
+      organization: "Company / Institution",
+      period: "2026 - PRESENT",
+      type: "LEADERSHIP",
+      description: "Description of role and achievements.",
+    }
+    setData({ ...data, about: { ...data.about, experience: [...data.about.experience, newItem] } })
+  }
+
+  const deleteExperience = (index: number) => {
+    if (!data) return
+    setData({ ...data, about: { ...data.about, experience: data.about.experience.filter((_, i) => i !== index) } })
+  }
+
+  const updatePillar = (index: number, field: keyof PillarItem, value: string) => {
+    if (!data) return
+    const pillars = [...data.about.pillars]
+    pillars[index] = { ...pillars[index], [field]: value }
+    setData({ ...data, about: { ...data.about, pillars } })
+  }
+
+  const updateCertification = (index: number, field: keyof CertificationItem, value: string) => {
+    if (!data) return
+    const certifications = [...data.about.certifications]
+    certifications[index] = { ...certifications[index], [field]: value }
     setData({ ...data, about: { ...data.about, certifications } })
   }
 
-  const updateSkillCategory = (catIndex: number, skills: string[]) => {
+  const addCertification = () => {
     if (!data) return
-    const skillCategories = [...data.about.skillCategories]
-    skillCategories[catIndex] = { ...skillCategories[catIndex], skills }
-    setData({ ...data, about: { ...data.about, skillCategories } })
+    const newCert: CertificationItem = {
+      title: "Certification Title",
+      issuer: "Issuing Organization",
+      date: "2026",
+      type: "Specialization",
+    }
+    setData({ ...data, about: { ...data.about, certifications: [...data.about.certifications, newCert] } })
   }
 
+  const deleteCertification = (index: number) => {
+    if (!data) return
+    setData({ ...data, about: { ...data.about, certifications: data.about.certifications.filter((_, i) => i !== index) } })
+  }
+
+  // ─── Skills Helpers ──────────────────────────────────────────────────────
+  const updateSkillsRow = (row: "row1" | "row2", list: string[]) => {
+    if (!data) return
+    setData({ ...data, skills: { ...data.skills, [row]: list } })
+  }
+
+  // ─── Contact Helpers ─────────────────────────────────────────────────────
   const updateContact = (field: string, value: string) => {
     if (!data) return
     setData({ ...data, contact: { ...data.contact, [field]: value } })
   }
 
+  // ─── Projects Helpers ────────────────────────────────────────────────────
   const saveProject = (proj: Project) => {
     if (!data) return
     let projects = [...data.projects]
@@ -281,7 +387,7 @@ export default function AdminPage() {
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
           </svg>
-          Loading...
+          Loading portfolio data...
         </div>
       </div>
     )
@@ -291,311 +397,796 @@ export default function AdminPage() {
 
   const tabs: { id: Tab; label: string; icon: string }[] = [
     { id: "hero", label: "Hero", icon: "🏠" },
-    { id: "about", label: "About", icon: "👤" },
+    { id: "about", label: "About & Credentials", icon: "👤" },
+    { id: "skills", label: "Tech Stack", icon: "⚡" },
     { id: "projects", label: "Projects", icon: "🚀" },
     { id: "contact", label: "Contact", icon: "📬" },
-    { id: "media", label: "Media", icon: "🖼️" },
+    { id: "media", label: "Media & Assets", icon: "🖼️" },
   ]
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-slate-900/95 backdrop-blur border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-sm font-bold">H</div>
-            <div>
-              <span className="font-bold text-white">Admin Dashboard</span>
-              <span className="text-slate-500 text-xs ml-2">Portfolio CMS</span>
-            </div>
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+      {/* Top Navbar */}
+      <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-40 px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white text-sm">
+            HP
           </div>
-          <div className="flex items-center gap-3">
-            {saved && (
-              <span className="text-green-400 text-sm flex items-center gap-1.5 animate-in fade-in duration-300">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                Saved!
-              </span>
-            )}
-            <a href="/" target="_blank" className="px-3 py-1.5 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-slate-800 transition-all flex items-center gap-1.5">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-              View Site
-            </a>
-            <button
-              onClick={save}
-              disabled={saving}
-              className="px-4 py-1.5 rounded-lg text-sm bg-blue-600 hover:bg-blue-500 text-white font-medium transition-all disabled:opacity-50 flex items-center gap-2 shadow-lg shadow-blue-500/20"
-            >
-              {saving ? (
+          <div>
+            <h1 className="font-semibold text-white leading-tight">Admin Portal</h1>
+            <p className="text-xs text-slate-500">Connected to MongoDB Atlas · Live Synchronization</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <a
+            href="/"
+            target="_blank"
+            className="px-3.5 py-2 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors flex items-center gap-1.5"
+          >
+            <span>Preview Website</span>
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+          </a>
+
+          <button
+            type="button"
+            onClick={save}
+            disabled={saving}
+            className={`px-4 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-2 shadow-lg shadow-blue-500/20 ${
+              saved
+                ? "bg-green-600 text-white"
+                : "bg-blue-600 hover:bg-blue-500 text-white disabled:opacity-50"
+            }`}
+          >
+            {saving ? (
+              <>
                 <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" /></svg>
-              ) : (
+                Saving...
+              </>
+            ) : saved ? (
+              <>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                Saved to MongoDB!
+              </>
+            ) : (
+              <>
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
-              )}
-              {saving ? "Saving..." : "Save Changes"}
-            </button>
-            <button onClick={logout} className="px-3 py-1.5 rounded-lg text-sm text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all">
-              Logout
-            </button>
-          </div>
+                Save Changes (Ctrl+S)
+              </>
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={logout}
+            className="p-2 text-slate-400 hover:text-red-400 rounded-lg hover:bg-slate-800 transition-colors"
+            title="Log Out"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+          </button>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 py-8 flex gap-8">
-        {/* Sidebar Nav */}
-        <aside className="w-48 shrink-0">
-          <nav className="space-y-1 sticky top-24">
-            {tabs.map((t) => (
-              <button
-                key={t.id}
-                onClick={() => setTab(t.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                  tab === t.id
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-500/25"
-                    : "text-slate-400 hover:text-white hover:bg-slate-800"
-                }`}
-              >
-                <span>{t.icon}</span>
-                {t.label}
-              </button>
-            ))}
-          </nav>
+      {/* Main Layout */}
+      <div className="flex-1 flex max-w-7xl w-full mx-auto p-6 gap-6">
+        {/* Sidebar Tabs */}
+        <aside className="w-56 shrink-0 space-y-1">
+          {tabs.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-left ${
+                tab === t.id
+                  ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
+                  : "text-slate-400 hover:text-white hover:bg-slate-900"
+              }`}
+            >
+              <span>{t.icon}</span>
+              {t.label}
+            </button>
+          ))}
         </aside>
 
-        {/* Main Content */}
-        <main className="flex-1 min-w-0">
-          {/* HERO TAB */}
+        {/* Content Area */}
+        <main className="flex-1 min-w-0 space-y-6 pb-20">
+
+          {/* ─── TAB: HERO ───────────────────────────────────────────────── */}
           {tab === "hero" && (
-            <section className="space-y-6">
-              <h2 className="text-xl font-bold">Hero Section</h2>
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-5">
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
+              <div>
+                <h2 className="text-lg font-semibold text-white">Hero & Identity</h2>
+                <p className="text-xs text-slate-500 mt-0.5">Primary header typography, title badge, and live introductory metrics.</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Field label="Full Name">
-                  <input className={inputCls} value={data.hero.name} onChange={(e) => updateHero("name", e.target.value)} placeholder="Your full name" />
+                  <input
+                    type="text"
+                    value={data.hero.name || ""}
+                    onChange={(e) => updateHero("name", e.target.value)}
+                    className={inputCls}
+                    placeholder="e.g. Hariprashath B"
+                  />
                 </Field>
-                <Field label="Role / Title">
-                  <input className={inputCls} value={data.hero.role} onChange={(e) => updateHero("role", e.target.value)} placeholder="AI Engineer | Full-Stack Developer" />
-                </Field>
-                <Field label="Tagline (shown in gradient)">
-                  <input className={inputCls} value={data.hero.tagline} onChange={(e) => updateHero("tagline", e.target.value)} placeholder="Crafting Intelligent Systems" />
-                </Field>
-                <Field label="Short Bio">
-                  <textarea className={textareaCls} rows={3} value={data.hero.bio} onChange={(e) => updateHero("bio", e.target.value)} placeholder="Short bio for the hero section" />
-                </Field>
-              </div>
 
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-                <h3 className="font-semibold text-slate-300">Stats</h3>
-                {data.hero.stats.map((stat, i) => (
-                  <div key={i} className="grid grid-cols-2 gap-3">
-                    <Field label={`Stat ${i + 1} Value`}>
-                      <input className={inputCls} value={stat.value} onChange={(e) => updateStat(i, "value", e.target.value)} />
-                    </Field>
-                    <Field label={`Stat ${i + 1} Label`}>
-                      <input className={inputCls} value={stat.label} onChange={(e) => updateStat(i, "label", e.target.value)} />
-                    </Field>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* ABOUT TAB */}
-          {tab === "about" && (
-            <section className="space-y-6">
-              <h2 className="text-xl font-bold">About Section</h2>
-
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-5">
-                <h3 className="font-semibold text-slate-300">Bio Paragraphs</h3>
-                {data.about.bio.map((para, i) => (
-                  <Field key={i} label={`Paragraph ${i + 1}`}>
-                    <textarea className={textareaCls} rows={4} value={para} onChange={(e) => updateAboutBio(i, e.target.value)} />
-                  </Field>
-                ))}
-              </div>
-
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-                <h3 className="font-semibold text-slate-300">Certifications</h3>
-                <p className="text-xs text-slate-500">One certification per line</p>
-                <Field label="Certifications">
-                  <textarea
-                    className={textareaCls}
-                    rows={10}
-                    value={data.about.certifications.join("\n")}
-                    onChange={(e) => updateCerts(e.target.value)}
-                    placeholder="Each certification on a new line"
+                <Field label="Role / Title Badge">
+                  <input
+                    type="text"
+                    value={data.hero.role || ""}
+                    onChange={(e) => updateHero("role", e.target.value)}
+                    className={inputCls}
+                    placeholder="e.g. AI Engineer & Full-Stack Architect"
                   />
                 </Field>
               </div>
 
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-5">
-                <h3 className="font-semibold text-slate-300">Skills</h3>
-                {data.about.skillCategories.map((cat, catIdx) => (
-                  <div key={cat.label} className="space-y-2">
-                    <label className="text-sm font-medium text-slate-300">{cat.label}</label>
-                    <TagInput tags={cat.skills} onChange={(skills) => updateSkillCategory(catIdx, skills)} />
-                  </div>
-                ))}
+              <Field label="Tagline / Headline">
+                <input
+                  type="text"
+                  value={data.hero.tagline || ""}
+                  onChange={(e) => updateHero("tagline", e.target.value)}
+                  className={inputCls}
+                  placeholder="e.g. Crafting Intelligent Systems"
+                />
+              </Field>
+
+              <Field label="Bio / Executive Summary">
+                <textarea
+                  rows={3}
+                  value={data.hero.bio || ""}
+                  onChange={(e) => updateHero("bio", e.target.value)}
+                  className={textareaCls}
+                  placeholder="Brief introduction displayed in the hero section..."
+                />
+              </Field>
+
+              {/* Stats Strip */}
+              <div className="space-y-3 pt-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Hero Metrics &amp; Badges</label>
+                  <button
+                    type="button"
+                    onClick={addStat}
+                    className="text-xs px-2.5 py-1 rounded bg-blue-600/20 text-blue-400 border border-blue-500/30 hover:bg-blue-600 hover:text-white transition-colors"
+                  >
+                    + Add Metric
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  {data.hero.stats.map((stat, i) => (
+                    <div key={i} className="flex gap-3 items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/60">
+                      <input
+                        type="text"
+                        value={stat.value}
+                        onChange={(e) => updateStat(i, "value", e.target.value)}
+                        placeholder="Value (e.g. Final Year)"
+                        className="w-1/3 px-3 py-2 text-sm rounded-lg bg-slate-800 border border-slate-700 text-white font-mono"
+                      />
+                      <input
+                        type="text"
+                        value={stat.label}
+                        onChange={(e) => updateStat(i, "label", e.target.value)}
+                        placeholder="Label (e.g. B.Tech AI & Data Science)"
+                        className="flex-1 px-3 py-2 text-sm rounded-lg bg-slate-800 border border-slate-700 text-white"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => deleteStat(i)}
+                        className="p-2 text-slate-500 hover:text-red-400 transition-colors"
+                        title="Delete Stat"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </section>
+            </div>
           )}
 
-          {/* PROJECTS TAB */}
+          {/* ─── TAB: ABOUT ──────────────────────────────────────────────── */}
+          {tab === "about" && (
+            <div className="space-y-6">
+              {/* Card 1: Narrative & KPIs */}
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
+                <div>
+                  <h2 className="text-lg font-semibold text-white">Academic &amp; Engineering Narrative</h2>
+                  <p className="text-xs text-slate-500 mt-0.5">Displayed in Bento Card 1 (Academic &amp; Engineering Directive).</p>
+                </div>
+
+                <Field label="Section Narrative Heading">
+                  <input
+                    type="text"
+                    value={data.about.heading || ""}
+                    onChange={(e) => updateAbout("heading", e.target.value)}
+                    className={inputCls}
+                  />
+                </Field>
+
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Bio Paragraphs</label>
+                    <button
+                      type="button"
+                      onClick={addParagraph}
+                      className="text-xs px-2.5 py-1 rounded bg-blue-600/20 text-blue-400 border border-blue-500/30 hover:bg-blue-600 hover:text-white transition-colors"
+                    >
+                      + Add Paragraph
+                    </button>
+                  </div>
+
+                  {data.about.paragraphs.map((para, i) => (
+                    <div key={i} className="flex gap-2 items-start">
+                      <textarea
+                        rows={3}
+                        value={para}
+                        onChange={(e) => updateParagraph(i, e.target.value)}
+                        className={textareaCls}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => deleteParagraph(i)}
+                        className="p-2 mt-2 text-slate-500 hover:text-red-400 transition-colors"
+                        title="Delete Paragraph"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                {/* KPI Metrics */}
+                <div className="space-y-3 pt-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Bento KPI Metrics Strip</label>
+                    <button
+                      type="button"
+                      onClick={addKpi}
+                      className="text-xs px-2.5 py-1 rounded bg-blue-600/20 text-blue-400 border border-blue-500/30 hover:bg-blue-600 hover:text-white transition-colors"
+                    >
+                      + Add KPI
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {data.about.kpis.map((kpi, i) => (
+                      <div key={i} className="flex gap-2 items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/60">
+                        <input
+                          type="text"
+                          value={kpi.value}
+                          onChange={(e) => updateKpi(i, "value", e.target.value)}
+                          placeholder="Value (e.g. 7.84)"
+                          className="w-1/3 px-3 py-2 text-sm rounded-lg bg-slate-800 border border-slate-700 text-white font-mono font-bold"
+                        />
+                        <input
+                          type="text"
+                          value={kpi.label}
+                          onChange={(e) => updateKpi(i, "label", e.target.value)}
+                          placeholder="Label (e.g. CGPA)"
+                          className="flex-1 px-3 py-2 text-sm rounded-lg bg-slate-800 border border-slate-700 text-white text-xs"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => deleteKpi(i)}
+                          className="p-1.5 text-slate-500 hover:text-red-400 transition-colors"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 2: Leadership & Experience */}
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-lg font-semibold text-white">Leadership &amp; Industry Experience</h2>
+                    <p className="text-xs text-slate-500 mt-0.5">Displayed in Bento Card 2.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={addExperience}
+                    className="text-xs px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-colors flex items-center gap-1.5"
+                  >
+                    <span>+ Add Role</span>
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  {data.about.experience.map((exp, i) => (
+                    <div key={i} className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/60 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-semibold text-blue-400 uppercase tracking-wider">Role #{i + 1}</span>
+                        <button
+                          type="button"
+                          onClick={() => deleteExperience(i)}
+                          className="text-xs text-slate-500 hover:text-red-400 transition-colors"
+                        >
+                          Delete Role
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <Field label="Role Title">
+                          <input
+                            type="text"
+                            value={exp.title}
+                            onChange={(e) => updateExperience(i, "title", e.target.value)}
+                            className={inputCls}
+                          />
+                        </Field>
+                        <Field label="Organization / Company">
+                          <input
+                            type="text"
+                            value={exp.organization}
+                            onChange={(e) => updateExperience(i, "organization", e.target.value)}
+                            className={inputCls}
+                          />
+                        </Field>
+                        <Field label="Period (e.g. JUL 2026 - PRESENT)">
+                          <input
+                            type="text"
+                            value={exp.period}
+                            onChange={(e) => updateExperience(i, "period", e.target.value)}
+                            className={inputCls}
+                          />
+                        </Field>
+                        <Field label="Badge / Category (e.g. INTERNSHIP / LEADERSHIP)">
+                          <input
+                            type="text"
+                            value={exp.type}
+                            onChange={(e) => updateExperience(i, "type", e.target.value)}
+                            className={inputCls}
+                          />
+                        </Field>
+                      </div>
+                      <Field label="Description">
+                        <textarea
+                          rows={2}
+                          value={exp.description}
+                          onChange={(e) => updateExperience(i, "description", e.target.value)}
+                          className={textareaCls}
+                        />
+                      </Field>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Card 3: Architectural Pillars */}
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
+                <div>
+                  <h2 className="text-lg font-semibold text-white">Architectural Pillars (3 Cards)</h2>
+                  <p className="text-xs text-slate-500 mt-0.5">Displayed across Bento Card 3.</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {data.about.pillars.map((pillar, i) => (
+                    <div key={i} className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/60 space-y-3">
+                      <div className="text-xs font-mono text-blue-400 font-bold">PILLAR 0{i + 1}</div>
+                      <Field label="Tag (e.g. AGENTIC_NODE)">
+                        <input
+                          type="text"
+                          value={pillar.tag}
+                          onChange={(e) => updatePillar(i, "tag", e.target.value)}
+                          className={inputCls}
+                        />
+                      </Field>
+                      <Field label="Title">
+                        <input
+                          type="text"
+                          value={pillar.title}
+                          onChange={(e) => updatePillar(i, "title", e.target.value)}
+                          className={inputCls}
+                        />
+                      </Field>
+                      <Field label="Description">
+                        <textarea
+                          rows={3}
+                          value={pillar.description}
+                          onChange={(e) => updatePillar(i, "description", e.target.value)}
+                          className={textareaCls}
+                        />
+                      </Field>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Card 4: Certifications */}
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-lg font-semibold text-white">Verified Certifications</h2>
+                    <p className="text-xs text-slate-500 mt-0.5">Displayed in Bento Card 4.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={addCertification}
+                    className="text-xs px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-colors flex items-center gap-1.5"
+                  >
+                    <span>+ Add Certificate</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {data.about.certifications.map((cert, i) => (
+                    <div key={i} className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/60 space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-mono text-emerald-400">CERT #{i + 1}</span>
+                        <button
+                          type="button"
+                          onClick={() => deleteCertification(i)}
+                          className="text-xs text-slate-500 hover:text-red-400 transition-colors"
+                        >
+                          ✕ Delete
+                        </button>
+                      </div>
+                      <Field label="Certificate Title">
+                        <input
+                          type="text"
+                          value={cert.title}
+                          onChange={(e) => updateCertification(i, "title", e.target.value)}
+                          className={inputCls}
+                        />
+                      </Field>
+                      <div className="grid grid-cols-3 gap-2">
+                        <Field label="Issuer">
+                          <input
+                            type="text"
+                            value={cert.issuer}
+                            onChange={(e) => updateCertification(i, "issuer", e.target.value)}
+                            className={inputCls}
+                          />
+                        </Field>
+                        <Field label="Date">
+                          <input
+                            type="text"
+                            value={cert.date}
+                            onChange={(e) => updateCertification(i, "date", e.target.value)}
+                            className={inputCls}
+                          />
+                        </Field>
+                        <Field label="Badge / Type">
+                          <input
+                            type="text"
+                            value={cert.type}
+                            onChange={(e) => updateCertification(i, "type", e.target.value)}
+                            className={inputCls}
+                          />
+                        </Field>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ─── TAB: SKILLS ─────────────────────────────────────────────── */}
+          {tab === "skills" && (
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
+              <div>
+                <h2 className="text-lg font-semibold text-white">Technical Stack &amp; Skills</h2>
+                <p className="text-xs text-slate-500 mt-0.5">Controls the continuous marquee badges in the Technical Stack section.</p>
+              </div>
+
+              <div className="space-y-6">
+                <div className="space-y-3 p-4 rounded-xl bg-slate-800/40 border border-slate-700/50">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-sm font-semibold text-white">Row 1: Modern Web &amp; Backend Engineering</h3>
+                      <p className="text-xs text-slate-400">Left-to-Right moving marquee pills.</p>
+                    </div>
+                    <span className="text-xs font-mono text-blue-400">{data.skills.row1.length} skills</span>
+                  </div>
+                  <TagInput
+                    tags={data.skills.row1}
+                    onChange={(tags) => updateSkillsRow("row1", tags)}
+                  />
+                </div>
+
+                <div className="space-y-3 p-4 rounded-xl bg-slate-800/40 border border-slate-700/50">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-sm font-semibold text-white">Row 2: Artificial Intelligence &amp; Autonomous Agents</h3>
+                      <p className="text-xs text-slate-400">Right-to-Left moving marquee pills.</p>
+                    </div>
+                    <span className="text-xs font-mono text-emerald-400">{data.skills.row2.length} skills</span>
+                  </div>
+                  <TagInput
+                    tags={data.skills.row2}
+                    onChange={(tags) => updateSkillsRow("row2", tags)}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ─── TAB: PROJECTS ───────────────────────────────────────────── */}
           {tab === "projects" && (
-            <section className="space-y-6">
+            <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold">Projects</h2>
+                <div>
+                  <h2 className="text-lg font-semibold text-white">Projects ({data.projects.length})</h2>
+                  <p className="text-xs text-slate-500">Live projects featured on your portfolio marquee and project cards.</p>
+                </div>
                 <button
+                  type="button"
                   onClick={() => {
                     setIsNewProject(true)
-                    setEditingProject({ id: "", title: "", description: "", tags: [], repoUrl: "", liveUrl: "", year: new Date().getFullYear().toString() })
+                    setEditingProject({
+                      id: `proj-${Date.now()}`,
+                      title: "",
+                      description: "",
+                      tags: [],
+                      repoUrl: "",
+                      liveUrl: "",
+                      year: new Date().getFullYear().toString(),
+                    })
                   }}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-all shadow-lg shadow-blue-500/20"
+                  className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-colors flex items-center gap-1.5"
                 >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                  Add Project
+                  <span>+ Add Project</span>
                 </button>
               </div>
 
-              <div className="space-y-3">
-                {data.projects.map((project) => (
-                  <div key={project.id} className="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl p-5 flex items-start justify-between gap-4 transition-all group">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="font-semibold text-white truncate">{project.title}</h3>
-                        <span className="text-xs text-slate-500 shrink-0">{project.year}</span>
+              {/* Project editor modal / panel */}
+              {editingProject && (
+                <div className="bg-slate-900 border-2 border-blue-500/50 rounded-2xl p-6 space-y-4 shadow-xl">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                    <h3 className="font-semibold text-white">
+                      {isNewProject ? "Add New Project" : `Edit Project: ${editingProject.title}`}
+                    </h3>
+                    <button
+                      type="button"
+                      onClick={() => setEditingProject(null)}
+                      className="text-slate-400 hover:text-white text-sm"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Field label="Project Title">
+                      <input
+                        type="text"
+                        value={editingProject.title}
+                        onChange={(e) => setEditingProject({ ...editingProject, title: e.target.value })}
+                        className={inputCls}
+                        placeholder="e.g. AutoFixHub – Agentic AI"
+                      />
+                    </Field>
+
+                    <Field label="Slug ID (unique key)">
+                      <input
+                        type="text"
+                        value={editingProject.id}
+                        onChange={(e) => setEditingProject({ ...editingProject, id: e.target.value })}
+                        className={inputCls}
+                        placeholder="e.g. autofixhub"
+                      />
+                    </Field>
+
+                    <Field label="Year">
+                      <input
+                        type="text"
+                        value={editingProject.year}
+                        onChange={(e) => setEditingProject({ ...editingProject, year: e.target.value })}
+                        className={inputCls}
+                        placeholder="2026"
+                      />
+                    </Field>
+
+                    <Field label="Repository URL">
+                      <input
+                        type="url"
+                        value={editingProject.repoUrl || ""}
+                        onChange={(e) => setEditingProject({ ...editingProject, repoUrl: e.target.value })}
+                        className={inputCls}
+                        placeholder="https://github.com/..."
+                      />
+                    </Field>
+
+                    <Field label="Live URL (optional)">
+                      <input
+                        type="url"
+                        value={editingProject.liveUrl || ""}
+                        onChange={(e) => setEditingProject({ ...editingProject, liveUrl: e.target.value })}
+                        className={inputCls}
+                        placeholder="https://..."
+                      />
+                    </Field>
+                  </div>
+
+                  <Field label="Description">
+                    <textarea
+                      rows={3}
+                      value={editingProject.description}
+                      onChange={(e) => setEditingProject({ ...editingProject, description: e.target.value })}
+                      className={textareaCls}
+                      placeholder="Detailed overview of technical architecture and features..."
+                    />
+                  </Field>
+
+                  <Field label="Technology Tags">
+                    <TagInput
+                      tags={editingProject.tags}
+                      onChange={(tags) => setEditingProject({ ...editingProject, tags })}
+                    />
+                  </Field>
+
+                  <div className="flex justify-end gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setEditingProject(null)}
+                      className="px-4 py-2 text-sm rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => saveProject(editingProject)}
+                      disabled={!editingProject.title.trim()}
+                      className="px-5 py-2 text-sm rounded-lg bg-blue-600 text-white hover:bg-blue-500 transition-colors disabled:opacity-50"
+                    >
+                      Apply to Projects
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Projects Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {data.projects.map((proj) => (
+                  <div
+                    key={proj.id}
+                    className="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 space-y-3 transition-all flex flex-col justify-between"
+                  >
+                    <div className="space-y-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <h4 className="font-semibold text-white leading-snug text-base">{proj.title}</h4>
+                        <span className="text-xs font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded shrink-0">
+                          {proj.year}
+                        </span>
                       </div>
-                      <p className="text-sm text-slate-400 line-clamp-2 mb-3">{project.description}</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {project.tags.map((tag) => (
-                          <span key={tag} className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 text-xs border border-blue-500/20">{tag}</span>
+                      <p className="text-xs text-slate-400 line-clamp-2">{proj.description}</p>
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {proj.tags.map((t) => (
+                          <span key={t} className="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-medium">
+                            {t}
+                          </span>
                         ))}
                       </div>
                     </div>
-                    <div className="flex gap-2 shrink-0">
-                      <button
-                        onClick={() => { setIsNewProject(false); setEditingProject({ ...project }) }}
-                        className="p-2 rounded-lg text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 transition-all"
-                        title="Edit"
-                      >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                      </button>
-                      <button
-                        onClick={() => deleteProject(project.id)}
-                        className="p-2 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
-                        title="Delete"
-                      >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                      </button>
+
+                    <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-500">
+                      <div className="truncate max-w-[200px]">
+                        {proj.repoUrl ? (
+                          <a href={proj.repoUrl} target="_blank" className="text-blue-400 hover:underline">
+                            {proj.repoUrl.replace("https://github.com/", "")}
+                          </a>
+                        ) : (
+                          "No repo URL"
+                        )}
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => { setIsNewProject(false); setEditingProject(proj) }}
+                          className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => deleteProject(proj.id)}
+                          className="px-2.5 py-1 rounded bg-slate-800 hover:bg-red-900/50 text-red-400 transition-colors"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
-
-              {/* Project Edit Modal */}
-              {editingProject && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                  <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
-                    <div className="sticky top-0 bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between">
-                      <h3 className="font-bold text-lg">{isNewProject ? "Add New Project" : "Edit Project"}</h3>
-                      <button onClick={() => { setEditingProject(null); setIsNewProject(false) }} className="text-slate-400 hover:text-white transition-colors">
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                      </button>
-                    </div>
-                    <div className="p-6 space-y-4">
-                      <Field label="Project ID (URL slug, no spaces)">
-                        <input className={inputCls} value={editingProject.id} onChange={(e) => setEditingProject({ ...editingProject, id: e.target.value.toLowerCase().replace(/\s+/g, "-") })} placeholder="my-project" disabled={!isNewProject} />
-                      </Field>
-                      <Field label="Title">
-                        <input className={inputCls} value={editingProject.title} onChange={(e) => setEditingProject({ ...editingProject, title: e.target.value })} />
-                      </Field>
-                      <Field label="Description">
-                        <textarea className={textareaCls} rows={4} value={editingProject.description} onChange={(e) => setEditingProject({ ...editingProject, description: e.target.value })} />
-                      </Field>
-                      <Field label="Year">
-                        <input className={inputCls} value={editingProject.year} onChange={(e) => setEditingProject({ ...editingProject, year: e.target.value })} placeholder="2025" />
-                      </Field>
-                      <Field label="Repository URL">
-                        <input className={inputCls} value={editingProject.repoUrl || ""} onChange={(e) => setEditingProject({ ...editingProject, repoUrl: e.target.value })} placeholder="https://github.com/..." />
-                      </Field>
-                      <Field label="Live URL (optional)">
-                        <input className={inputCls} value={editingProject.liveUrl || ""} onChange={(e) => setEditingProject({ ...editingProject, liveUrl: e.target.value })} placeholder="https://..." />
-                      </Field>
-                      <Field label="Tags">
-                        <TagInput tags={editingProject.tags} onChange={(tags) => setEditingProject({ ...editingProject, tags })} />
-                      </Field>
-                    </div>
-                    <div className="sticky bottom-0 bg-slate-900 border-t border-slate-800 px-6 py-4 flex justify-end gap-3">
-                      <button onClick={() => { setEditingProject(null); setIsNewProject(false) }} className="px-4 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-slate-800 transition-all">Cancel</button>
-                      <button
-                        onClick={() => {
-                          if (!editingProject.id || !editingProject.title) { alert("ID and Title are required"); return }
-                          saveProject(editingProject)
-                        }}
-                        className="px-5 py-2 rounded-lg text-sm bg-blue-600 hover:bg-blue-500 text-white font-medium transition-all shadow-lg shadow-blue-500/20"
-                      >
-                        {isNewProject ? "Add Project" : "Save Changes"}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </section>
+            </div>
           )}
 
-          {/* CONTACT TAB */}
+          {/* ─── TAB: CONTACT ────────────────────────────────────────────── */}
           {tab === "contact" && (
-            <section className="space-y-6">
-              <h2 className="text-xl font-bold">Contact Information</h2>
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-5">
-                <Field label="Email">
-                  <input className={inputCls} type="email" value={data.contact.email} onChange={(e) => updateContact("email", e.target.value)} />
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
+              <div>
+                <h2 className="text-lg font-semibold text-white">Contact &amp; Social Links</h2>
+                <p className="text-xs text-slate-500 mt-0.5">Used across Contact section, Header, and Footer.</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Field label="Email Address">
+                  <input
+                    type="email"
+                    value={data.contact.email}
+                    onChange={(e) => updateContact("email", e.target.value)}
+                    className={inputCls}
+                  />
                 </Field>
-                <Field label="Phone">
-                  <input className={inputCls} value={data.contact.phone} onChange={(e) => updateContact("phone", e.target.value)} />
+
+                <Field label="Phone Number">
+                  <input
+                    type="text"
+                    value={data.contact.phone}
+                    onChange={(e) => updateContact("phone", e.target.value)}
+                    className={inputCls}
+                  />
                 </Field>
+
                 <Field label="Location">
-                  <input className={inputCls} value={data.contact.location} onChange={(e) => updateContact("location", e.target.value)} />
+                  <input
+                    type="text"
+                    value={data.contact.location}
+                    onChange={(e) => updateContact("location", e.target.value)}
+                    className={inputCls}
+                  />
                 </Field>
-                <Field label="GitHub URL">
-                  <input className={inputCls} value={data.contact.github} onChange={(e) => updateContact("github", e.target.value)} />
+
+                <Field label="GitHub Profile URL">
+                  <input
+                    type="url"
+                    value={data.contact.github}
+                    onChange={(e) => updateContact("github", e.target.value)}
+                    className={inputCls}
+                  />
                 </Field>
-                <Field label="LinkedIn URL">
-                  <input className={inputCls} value={data.contact.linkedin} onChange={(e) => updateContact("linkedin", e.target.value)} />
-                </Field>
-                <Field label="Fun Fact">
-                  <textarea className={textareaCls} rows={4} value={data.contact.funFact} onChange={(e) => updateContact("funFact", e.target.value)} />
+
+                <Field label="LinkedIn Profile URL">
+                  <input
+                    type="url"
+                    value={data.contact.linkedin}
+                    onChange={(e) => updateContact("linkedin", e.target.value)}
+                    className={inputCls}
+                  />
                 </Field>
               </div>
-            </section>
+
+              <Field label="Personal Fun Fact / Statement">
+                <textarea
+                  rows={3}
+                  value={data.contact.funFact}
+                  onChange={(e) => updateContact("funFact", e.target.value)}
+                  className={textareaCls}
+                />
+              </Field>
+            </div>
           )}
 
-          {/* MEDIA TAB */}
+          {/* ─── TAB: MEDIA ──────────────────────────────────────────────── */}
           {tab === "media" && (
-            <section className="space-y-6">
-              <h2 className="text-xl font-bold">Media Management</h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <FileUploader
-                  type="profile"
-                  label="Profile Picture"
-                  accept="image/jpeg,image/png,image/webp"
-                  hint="Used in the Hero section (1:1 ratio recommended)"
-                  previewUrl="/Profile.jpeg"
-                />
-                <FileUploader
-                  type="logo"
-                  label="Site Logo"
-                  accept="image/jpeg,image/png,image/webp,image/svg+xml,image/x-icon"
-                  hint="Used as favicon and in header (small square)"
-                  previewUrl="/logo.jpg"
-                />
-                <FileUploader
-                  type="resume"
-                  label="Resume PDF"
-                  accept="application/pdf"
-                  hint="Linked in the header and about section"
-                  previewUrl="/resume.pdf"
-                />
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-lg font-semibold text-white">Media &amp; Documents</h2>
+                <p className="text-xs text-slate-500 mt-0.5">Upload and overwrite public images and download assets.</p>
               </div>
-            </section>
+
+              <FileUploader
+                type="resume"
+                label="Resume PDF"
+                accept=".pdf,application/pdf"
+                hint="Upload your latest PDF resume. Replaces /resume.pdf directly so the 'Download Resume' button gives the new file."
+                previewUrl="/resume.pdf"
+              />
+
+              <FileUploader
+                type="profile"
+                label="Profile Picture"
+                accept="image/*"
+                hint="Upload a square JPEG/PNG. Replaces /Profile.jpeg on the hero profile card."
+                previewUrl="/Profile.jpeg"
+              />
+            </div>
           )}
+
         </main>
       </div>
     </div>

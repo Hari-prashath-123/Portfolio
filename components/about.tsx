@@ -1,71 +1,121 @@
 "use client"
 
 import { AnimateOnScroll } from "./scroll-animations"
-import { Award, Briefcase, GraduationCap, Sparkles, CheckCircle2, Terminal, ArrowUpRight, Cpu, Layers } from "lucide-react"
+import { Award, Briefcase, GraduationCap, CheckCircle2, Terminal, Cpu, Layers, Download } from "lucide-react"
+import type { AboutData } from "@/lib/portfolio-data"
 
-export default function About() {
-  const certifications = [
-    {
-      title: "PL-300: Microsoft Power BI Data Analyst Associate",
-      issuer: "Microsoft",
-      date: "May 2025",
-      type: "Certified Associate",
-    },
-    {
-      title: "Generative AI, Prompt Engineering & ChatGPT",
-      issuer: "Simplilearn",
-      date: "May 2025",
-      type: "Specialization",
-    },
-    {
-      title: "Cloud Computing with AI Specialist Intern",
-      issuer: "CloudplusAI Tech",
-      date: "Apr–Jun 2025",
-      type: "Industry Internship",
-    },
-    {
-      title: "Python for Data Science & Tableau Desktop Specialist",
-      issuer: "Simplilearn",
-      date: "2024",
-      type: "Data Science Track",
-    },
-    {
-      title: "Machine Learning using Python",
-      issuer: "Simplilearn",
-      date: "2024",
-      type: "Core ML",
-    },
-    {
-      title: "HDCA (Honours Diploma in Computer Applications)",
-      issuer: "Apollo Institute",
-      date: "Foundation",
-      type: "C / C++ / Python",
-    },
-  ]
+const PILLAR_ICONS = [Cpu, Layers, Terminal]
 
-  const pillars = [
-    {
-      icon: Cpu,
-      title: "Autonomous Agentic AI",
-      tag: "AGENTIC_NODE",
-      description:
-        "Architecting reasoning loops, autonomous tool-calling systems, and multi-agent workflows using LangGraph, CrewAI, and modern LLM frameworks.",
-    },
-    {
-      icon: Layers,
-      title: "Production Full-Stack AI",
-      tag: "FULLSTACK_CORE",
-      description:
-        "Building reactive, ultra-fast interfaces in Next.js & React, backed by robust asynchronous APIs in FastAPI, Node.js, PostgreSQL, and Supabase.",
-    },
-    {
-      icon: Terminal,
-      title: "Data Intelligence & Analytics",
-      tag: "DATA_PIPELINE",
-      description:
-        "PL-300 certified data modeling, exploratory business intelligence, fine-tuning evaluations, and end-to-end telemetry for real-world reliability.",
-    },
-  ]
+export default function About({ data }: { data?: AboutData }) {
+  const heading = data?.heading || "Architecting Autonomous AI Systems with Production-Grade Engineering."
+  const paragraphs = (data?.paragraphs && data.paragraphs.length > 0)
+    ? data.paragraphs
+    : [
+        "I am a Final-Year B.Tech student in Artificial Intelligence & Data Science at K. Ramakrishnan College of Technology (KRCT), Trichy, maintaining a strong academic standing with a 7.84 CGPA.",
+        "My core expertise spans designing multi-agent collaborative workflows, fine-tuning large language models, prompt engineering, and building resilient full-stack platforms. I thrive at the convergence of research-driven generative AI and scalable software architecture.",
+      ]
+
+  const kpis = (data?.kpis && data.kpis.length > 0)
+    ? data.kpis
+    : [
+        { value: "7.84", label: "CGPA (Till 6th Sem)" },
+        { value: "2027", label: "Graduation Batch" },
+        { value: "8+", label: "Production Systems" },
+        { value: "700+", label: "Event Attendees" },
+      ]
+
+  const experience = (data?.experience && data.experience.length > 0)
+    ? data.experience
+    : [
+        {
+          title: "President · AGEN Club",
+          organization: "KRCT",
+          period: "2025 - PRESENT",
+          type: "LEADERSHIP",
+          description: "Lead the Agentic & Generative AI Club. Organized campus-wide webinars, hands-on hackathons, and technical workshops generating 700+ impressions.",
+        },
+        {
+          title: "React.js & Vite Developer Intern",
+          organization: "Centennial InfoTech Pvt. Ltd.",
+          period: "JUL 2026 - PRESENT",
+          type: "INTERNSHIP",
+          description: "Centennial InfoTech Pvt. Ltd. Building Centennial Connect, a production SaaS platform for AI-powered business calling with real-time AI voice agents and intelligent power dialing.",
+        },
+        {
+          title: "AI & Cloud Specialist Intern",
+          organization: "CloudplusAI Tech",
+          period: "APR–JUN 2025",
+          type: "INTERNSHIP",
+          description: "CloudplusAI Tech. Engineered cloud computing integration with AI workloads, containerized model APIs, and assisted in deployment architectures.",
+        },
+      ]
+
+  const pillars = (data?.pillars && data.pillars.length > 0)
+    ? data.pillars
+    : [
+        {
+          tag: "AGENTIC_NODE",
+          title: "Autonomous Agentic AI",
+          description: "Architecting reasoning loops, autonomous tool-calling systems, and multi-agent workflows using LangGraph, CrewAI, and modern LLM frameworks.",
+        },
+        {
+          tag: "FULLSTACK_CORE",
+          title: "Production Full-Stack AI",
+          description: "Building reactive, ultra-fast interfaces in Next.js & React, backed by robust asynchronous APIs in FastAPI, Node.js, PostgreSQL, and Supabase.",
+        },
+        {
+          tag: "DATA_PIPELINE",
+          title: "Data Intelligence & Analytics",
+          description: "PL-300 certified data modeling, exploratory business intelligence, fine-tuning evaluations, and end-to-end telemetry for real-world reliability.",
+        },
+      ]
+
+  const certifications = (data?.certifications && data.certifications.length > 0)
+    ? data.certifications
+    : [
+        {
+          title: "Applied Generative AI Specialization",
+          issuer: "Simplilearn",
+          date: "May 2026",
+          type: "Distinction Award",
+        },
+        {
+          title: "PL-300: Microsoft Power BI Data Analyst Associate",
+          issuer: "Microsoft",
+          date: "May 2025",
+          type: "Certified Associate",
+        },
+        {
+          title: "Essentials of Generative AI, Prompt Engineering & ChatGPT",
+          issuer: "Simplilearn",
+          date: "May 2025",
+          type: "Specialization",
+        },
+        {
+          title: "Cloud Computing with AI Specialist Intern",
+          issuer: "CloudplusAI Tech",
+          date: "Apr–Jun 2025",
+          type: "Industry Internship",
+        },
+        {
+          title: "Python for Data Science & Tableau Desktop Specialist",
+          issuer: "Simplilearn",
+          date: "2024",
+          type: "Data Science Track",
+        },
+        {
+          title: "Machine Learning using Python",
+          issuer: "Simplilearn",
+          date: "2024",
+          type: "Core ML",
+        },
+        {
+          title: "HDCA (Honours Diploma in Computer Applications)",
+          issuer: "Apollo Institute",
+          date: "Foundation",
+          type: "C / C++ / Python",
+        },
+      ]
 
   return (
     <section id="about" className="relative py-28 px-4 bg-[#07090e] overflow-hidden">
@@ -95,6 +145,18 @@ export default function About() {
             <p className="text-sm sm:text-base text-white/60 max-w-2xl mx-auto leading-relaxed">
               Academic foundation at KRCT, leadership as President of the AGEN Club, and verified industry credentials in Artificial Intelligence.
             </p>
+
+            {/* Download Resume CTA */}
+            <div className="pt-2">
+              <a
+                href="/resume.pdf"
+                download="Hariprashath-B-Resume.pdf"
+                className="inline-flex items-center gap-2.5 px-6 py-3 rounded-2xl font-semibold text-sm text-white border border-white/20 bg-white/[0.06] hover:bg-white/[0.12] hover:border-white/40 hover:scale-105 hover:shadow-[0_0_30px_rgba(255,255,255,0.12)] transition-all duration-300 backdrop-blur-md"
+              >
+                <Download className="w-4 h-4" />
+                Download Resume
+              </a>
+            </div>
           </div>
         </AnimateOnScroll>
 
@@ -124,56 +186,35 @@ export default function About() {
 
                 <div className="space-y-4">
                   <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-snug">
-                    Architecting Autonomous AI Systems with Production-Grade Engineering.
+                    {heading}
                   </h3>
-                  <p className="text-sm sm:text-base text-white/70 leading-relaxed">
-                    I am a Final-Year B.Tech student in <span className="text-white font-medium">Artificial Intelligence & Data Science</span> at <span className="text-white font-medium">K. Ramakrishnan College of Technology (KRCT)</span>, Trichy, maintaining a strong academic standing with a <span className="text-emerald-300 font-mono font-semibold">7.89 CGPA</span>.
-                  </p>
-                  <p className="text-sm sm:text-base text-white/70 leading-relaxed">
-                    My core expertise spans designing multi-agent collaborative workflows, fine-tuning large language models, prompt engineering, and building resilient full-stack platforms. I thrive at the convergence of research-driven generative AI and scalable software architecture.
-                  </p>
+                  {paragraphs.map((p, idx) => (
+                    <p key={idx} className="text-sm sm:text-base text-white/70 leading-relaxed">
+                      {p}
+                    </p>
+                  ))}
                 </div>
               </div>
 
               {/* KPI Metrics Pill Strip */}
-              <div className="pt-8 mt-6 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-white/20 transition-all duration-300 group/kpi">
-                  <div className="text-xl sm:text-2xl font-black text-white group-hover/kpi:text-emerald-300 transition-colors font-mono">
-                    7.89
-                  </div>
-                  <div className="text-[11px] text-white/50 tracking-wide font-mono uppercase mt-0.5">
-                    CGPA (Till 5th Sem)
-                  </div>
+              {kpis.length > 0 && (
+                <div className="pt-8 mt-6 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                  {kpis.map((kpi, idx) => (
+                    <div key={idx} className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-white/20 transition-all duration-300 group/kpi">
+                      <div className="text-xl sm:text-2xl font-black text-white group-hover/kpi:text-emerald-300 transition-colors font-mono">
+                        {kpi.value}
+                      </div>
+                      <div className="text-[11px] text-white/50 tracking-wide font-mono uppercase mt-0.5">
+                        {kpi.label}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-white/20 transition-all duration-300 group/kpi">
-                  <div className="text-xl sm:text-2xl font-black text-white group-hover/kpi:text-emerald-300 transition-colors font-mono">
-                    2026
-                  </div>
-                  <div className="text-[11px] text-white/50 tracking-wide font-mono uppercase mt-0.5">
-                    Graduation Batch
-                  </div>
-                </div>
-                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-white/20 transition-all duration-300 group/kpi">
-                  <div className="text-xl sm:text-2xl font-black text-white group-hover/kpi:text-emerald-300 transition-colors font-mono">
-                    8+
-                  </div>
-                  <div className="text-[11px] text-white/50 tracking-wide font-mono uppercase mt-0.5">
-                    Production Systems
-                  </div>
-                </div>
-                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-white/20 transition-all duration-300 group/kpi">
-                  <div className="text-xl sm:text-2xl font-black text-white group-hover/kpi:text-emerald-300 transition-colors font-mono">
-                    700+
-                  </div>
-                  <div className="text-[11px] text-white/50 tracking-wide font-mono uppercase mt-0.5">
-                    Event Attendees
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
           </AnimateOnScroll>
 
-          {/* BENTO CARD 2: Leadership & Industry Experience (1 Column) */}
+          {/* BENTO CARD 2: Leadership & Industry (1 Column) */}
           <AnimateOnScroll animation="fade-up" delay={200} className="h-full">
             <div className="hud-card rounded-[32px] p-8 h-full flex flex-col justify-between relative overflow-hidden border border-white/10 group hover:border-white/25 hover:shadow-[0_25px_60px_rgba(0,0,0,0.8)] transition-all duration-300">
               {/* Top Specular Sheen line */}
@@ -190,36 +231,23 @@ export default function About() {
                   </span>
                 </div>
 
-                {/* Role 1: Club President */}
-                <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-white/25 hover:bg-white/[0.05] transition-all duration-300 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono text-emerald-400 font-semibold uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20">
-                      2025 - PRESENT
-                    </span>
-                    <span className="text-xs font-mono text-white/50">KRCT</span>
-                  </div>
-                  <h4 className="text-base font-bold text-white flex items-center gap-1.5">
-                    President · AGEN Club
-                  </h4>
-                  <p className="text-xs text-white/60 leading-relaxed">
-                    Lead the Agentic & Generative AI Club. Organized campus-wide webinars, hands-on hackathons, and technical workshops generating 700+ impressions.
-                  </p>
-                </div>
-
-                {/* Role 2: Industry Internship */}
-                <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-white/25 hover:bg-white/[0.05] transition-all duration-300 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono text-slate-300 font-semibold uppercase tracking-wider px-2 py-0.5 rounded-md bg-white/10 border border-white/15">
-                      APR–JUN 2025
-                    </span>
-                    <span className="text-xs font-mono text-white/50">INTERNSHIP</span>
-                  </div>
-                  <h4 className="text-base font-bold text-white flex items-center gap-1.5">
-                    AI & Cloud Specialist Intern
-                  </h4>
-                  <p className="text-xs text-white/60 leading-relaxed">
-                    CloudplusAI Tech. Engineered cloud computing integration with AI workloads, containerized model APIs, and assisted in deployment architectures.
-                  </p>
+                <div className="space-y-3">
+                  {experience.map((item, idx) => (
+                    <div key={idx} className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-white/25 hover:bg-white/[0.05] transition-all duration-300 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono text-emerald-400 font-semibold uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20">
+                          {item.period}
+                        </span>
+                        <span className="text-xs font-mono text-white/50">{item.organization}</span>
+                      </div>
+                      <h4 className="text-base font-bold text-white flex items-center gap-1.5">
+                        {item.title}
+                      </h4>
+                      <p className="text-xs text-white/60 leading-relaxed">
+                        {item.description}
+                      </p>
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -233,9 +261,9 @@ export default function About() {
           {/* BENTO CARD 3: Core Architectural Capabilities (3 Columns full width) */}
           <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
             {pillars.map((pillar, idx) => {
-              const Icon = pillar.icon
+              const Icon = PILLAR_ICONS[idx % PILLAR_ICONS.length] || Cpu
               return (
-                <AnimateOnScroll key={pillar.title} animation="fade-up" delay={250 + idx * 80}>
+                <AnimateOnScroll key={pillar.title || idx} animation="fade-up" delay={250 + idx * 80}>
                   <div className="hud-card rounded-[28px] p-6 h-full flex flex-col justify-between relative overflow-hidden border border-white/10 group hover:border-white/30 hover:-translate-y-1.5 hover:shadow-[0_20px_50px_rgba(0,0,0,0.8)] transition-all duration-300">
                     {/* Top Specular Sheen line */}
                     <div 
@@ -295,7 +323,7 @@ export default function About() {
                 </div>
                 <div className="hud-tag text-[11px] py-1 px-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  6 VERIFIED CREDENTIALS
+                  {certifications.length} VERIFIED CREDENTIALS
                 </div>
               </div>
 
