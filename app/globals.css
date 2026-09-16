@@ -838,16 +838,19 @@ html {
   will-change: transform;
 }
 
-.marquee-track--left {
+.marquee-track--left,
+.animate-marquee-reverse {
   animation: marqueeLeft 30s linear infinite;
 }
 
-.marquee-track--right {
+.marquee-track--right,
+.animate-marquee {
   animation: marqueeRight 30s linear infinite;
 }
 
 /* Pause on hover for the entire row */
-.marquee-row:hover .marquee-track {
+.marquee-row:hover .marquee-track,
+.marquee-container:hover .marquee-track {
   animation-play-state: paused;
 }
 

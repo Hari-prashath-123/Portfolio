@@ -74,10 +74,8 @@ export default function TechStack({ skills }: { skills?: SkillsData }) {
         <AnimateOnScroll animation="fade-up" delay={100}>
           <div className="space-y-6">
             {/* Row 1: Left to Right */}
-            <div className="marquee-container overflow-hidden relative">
-              <div className="marquee-fade-left" />
-              <div className="marquee-fade-right" />
-              <div className="marquee-track flex gap-3 w-max animate-marquee">
+            <div className="marquee-row py-1 relative">
+              <div className="marquee-track marquee-track--right flex gap-3 w-max">
                 {row1Double.map((tech, index) => (
                   <div
                     key={`${tech}-${index}`}
@@ -91,10 +89,8 @@ export default function TechStack({ skills }: { skills?: SkillsData }) {
             </div>
 
             {/* Row 2: Right to Left */}
-            <div className="marquee-container overflow-hidden relative">
-              <div className="marquee-fade-left" />
-              <div className="marquee-fade-right" />
-              <div className="marquee-track flex gap-3 w-max animate-marquee-reverse">
+            <div className="marquee-row py-1 relative">
+              <div className="marquee-track marquee-track--left flex gap-3 w-max">
                 {row2Double.map((tech, index) => (
                   <div
                     key={`${tech}-${index}`}
